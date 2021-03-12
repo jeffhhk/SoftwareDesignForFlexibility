@@ -1,0 +1,416 @@
+\input texinfo @c -*-texinfo-*-
+@comment %**start of header
+@set UPDATED 2021-02-06
+@settitle @acronym{SDF} Software Manager
+@comment %**end of header
+@finalout
+
+@copying
+This manual is for the @acronym{SDF} Software Manager.
+
+Copyright @copyright{} 2019, 2021 Chris Hanson and Gerald Jay Sussman.
+
+@quotation
+This work is licensed under the Creative Commons
+Attribution-ShareAlike 4.0 International License.  To view a copy of
+this license, visit
+@uref{http://creativecommons.org/licenses/by-sa/4.0/} or send a letter
+to Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+@end quotation
+@end copying
+
+@dircategory Programming
+@direntry
+* SDF Software Manager: (software-manager).
+@end direntry
+
+@titlepage
+@title The @acronym{SDF} Software Manager
+@subtitle @value{UPDATED}
+@author Chris Hanson
+@author Gerald Jay Sussman
+
+@c  The following two commands
+@c  start the copyright page.
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+
+@end titlepage
+
+@setchapternewpage off
+@headings double
+
+@ifnottex
+@node Top, Introduction, (dir), (dir)
+@top The @acronym{SDF} Software Manager
+
+This manual documents the software management program included with
+the software for the book @cite{Software Design for Flexibility}.
+@end ifnottex
+
+@menu
+* Introduction::
+* Working Environments::
+* Analyzing the Software::
+* Running Tests::
+* Miscellaneous::
+* Command Index::
+@end menu
+
+@node Introduction, Working Environments, Top, Top
+@chapter Introduction
+
+This manual documents the software management program included with
+the software for the book @cite{Software Design for Flexibility}.  The
+manager is a tool to help one use the associated software.  For
+example, it simplifies the job of loading the software needed to
+reproduce the examples in the book and to support the solution of the
+book's exercises.  The book contains an appendix @cite{Supporting
+Software} that explains where the software can be obtained and an
+overview of how it is used.
+
+Both the management software and the book's software is designed to be
+run using the @uref{http://www.gnu.org/software/mit-scheme, MIT/GNU
+Scheme} implementation, version 10.1.11 or later.  The Scheme system
+must be separately downloaded and installed.
+
+To use the manager, start up the Scheme system and evaluate the
+following expression:
+@lisp
+(load "@var{foo/}sdf/manager/load")
+@end lisp
+where @var{foo/} is the path to the directory in which the software
+archive was unpacked.  The manager creates a single definition in the
+global environment, called @code{manage}.  Once loaded, it's not
+necessary to reload the manager unless a new instance of Scheme is
+started.
+
+@deffn {Procedure} manage command arg @dots{}
+This procedure is the entry point for all of the operations that can
+be performed by the manager.  The @var{command} argument is a symbol
+that specifies the operation to be performed.  The @var{arg}s, if any,
+are command-specific and documented for each command in the following
+sections.
+
+As a convenience, @var{command} can be a string (or symbol) that is a
+prefix of the desired command's name.  If so, the manager finds all
+of the command names that contain the given prefix; if there is
+exactly one, the manager runs that command.  Otherwise, it prints an
+error message.
+
+The prefix match also treats punctuated names specially.  Since many
+command and flavor names are punctuated by @samp{-} or @samp{:}, it
+treats those names as if they were lists of fragments.  When matching,
+the match string is also treated as a list of fragments, and the two
+lists are compared with one another by matching prefixes.  For
+example:
+
+@lisp
+
+(manage 'command-apropos 'd)
+@result{} (debug-internal-errors debug-test-errors
+           defined-in-file defining-files)
+
+(manage 'command-apropos 'd-i)
+@result{} (debug-internal-errors defined-in-file)
+
+(manage 'command-apropos 'd-i-e)
+@result{} (debug-internal-errors)
+
+(manage 'command-apropos 'deb-i)
+@result{} (debug-internal-errors)
+@end lisp
+@end deffn
+
+In this document, the description of each command is of the form:
+
+@deffn {Manager Command} @var{command-name} @var{args}
+@end deffn
+
+where @var{command-name} is the name of the command (a symbol), and
+@var{args} are the arguments required by the command.  Any @var{args}
+surrounded by square brackets (@samp{[]}) are optional, while a
+trailing @dots{} indicates that any number of arguments may be
+provided.  To invoke a command, call the @code{manage} procedure like
+this:
+@lisp
+(manage 'new-environment 'combinators)
+@end lisp
+This specifies the @code{new-environment} command and provides it with
+a single argument, the symbol @code{combinators}.
+
+The most important command is @code{help}:
+
+@deffn {Manager Command} help
+The @code{help} command prints out all of the supported commands and
+brief documentation for each.
+
+Usage: @samp{(manage 'help)}.
+@end deffn
+
+Another useful command is @code{command-apropos}:
+
+@deffn {Manager command} command-apropos string
+Returns a list of the command names containing STRING.  This is useful
+for finding a minimal string that specifies a unique command, as well
+as finding related command names.
+@end deffn
+
+@node Working Environments, Analyzing the Software, Introduction, Top
+@chapter Working Environments
+
+The primary purpose of the manager is to create working environments
+that contain the code necessary to explore a specific section of the
+book.  The book's software is organized into @dfn{flavors}, which
+roughly correspond to individual sections of the book.  Each flavor
+name corresponds to the name of a book section; when there are
+multiple flavors for a given section, the flavor name has a suffix
+beginning with a colon.
+
+A @dfn{working environment} as defined here is a Scheme environment
+that inherits all of Scheme's global definitions and into which all of
+the necessary program code has been loaded.  To use a working
+environment, one ``selects'' it by changing the Scheme @acronym{REPL,
+Read-Eval-Print Loop} to use that environment.  After doing so, any
+expressions evaluated by the @acronym{REPL} will be interpreted in
+that environment.  For convenience, @code{manage} provides high-level
+commands for switching between working environments, so it's not
+necessary to know the details about how to change the environment of
+the @acronym{REPL}.
+
+When we say that a ``flavor is loaded'', that means the files for the
+flavor are retrieved from the file system and loaded into the
+environment.  If you have made changes to those files, your changes
+will be visible in the environment.
+
+As with specification of command names, a flavor name passed as an
+argument to one of these commands may be specified by an abbreviation
+that matches exactly one flavor name.
+
+The most basic working environment command is @code{new-environment}.
+
+@deffn {Manager Command} new-environment flavor @dots{}
+This command creates a new working environment, loads all of the
+software specified by the @var{flavor} arguments, and changes the
+@acronym{REPL} to be in the new environment.  The previous
+environment, if any, is dropped and will be inaccessible unless it has
+been given a name.
+
+Examples: @samp{(manage 'new-environment)} creates a new working
+environment without loading any software.
+@samp{(manage 'new-environment 'combinators)} creates a new working
+environment and loads the software for flavor @code{combinators}.
+
+Note to advanced users: if the @acronym{REPL} is nested, such as that
+resulting from an error, this command will abort the nested
+@acronym{REPL} and return to the top-level @acronym{REPL}.
+@end deffn
+
+@deffn {Manager Command} add-flavor flavor
+This command modifies the current working environment by loading the
+software for @var{flavor} into it.  @code{add-flavor} is useful when
+some work has been done in a working environment and one decides that
+another section provides useful functionality for continuing the
+work.  If instead the flavors to be used are known in advance, the
+@code{new-environment} command is sufficient.
+
+Some examples:
+@lisp
+(manage 'new-environment)
+(manage 'add-flavor @var{flavor1})
+;; is equivalent to:
+(manage 'new-environment @var{flavor1})
+
+;; Likewise
+(manage 'new-environment @var{flavor1})
+(manage 'add-flavor @var{flavor2})
+;; is equivalent to:
+(manage 'new-environment @var{flavor1} @var{flavor2})
+@end lisp
+@end deffn
+
+It might be useful to know what flavors are available to be used:
+
+@deffn {Manager Command} list-flavors
+Returns a list of the known flavors.
+@end deffn
+
+@deffn {Manager command} flavor-apropos string
+Returns a list of the flavor names containing STRING.  This is useful
+for finding a minimal string that specifies a unique flavor, as well
+as finding related flavor names.
+@end deffn
+
+By giving names to working environments, we can have more than one and
+switch among them.  The following commands manage named environments.
+The @var{name} arguments that they accept can be any object, but they
+must be comparable using the @code{eqv?} procedures.  Consequently the
+most useful names are things like symbols or numbers, and @emph{not}
+strings or lists.
+
+@deffn {Manager Command} name-current-environment name
+Gives the current working environment the name @var{name}.  The
+@var{name} must not be a known working environment name.
+@end deffn
+
+As with specification of command names and flavor names, an
+environment name passed as an argument to one of the following
+commands may be specified by an abbreviation that matches exactly one
+environment name.
+
+@deffn {Manager Command} use-environment name
+Selects the environment named @var{name} by changing the
+@acronym{REPL} to be in that environment.
+
+Note to advanced users: if the @acronym{REPL} is nested, such as that
+resulting from an error, this command will abort the nested
+@acronym{REPL} and return to the top-level @acronym{REPL}.
+@end deffn
+
+@deffn {Manager Command} remove-environment-name name
+Removes the name @var{name} from whatever working environment it
+identifies.  The @var{name} must be a known environment name.  If the
+named environment has no other names and is not the current working
+environment, then it becomes inaccessible and will be garbage
+collected.
+@end deffn
+
+@deffn {Manager Command} environment-names
+Returns a list of the known environment names.
+@end deffn
+
+@deffn {Manager command} environment-apropos string
+Returns a list of the environment names containing STRING.  This is
+useful for finding a minimal string that specifies a unique
+environment, as well as finding related environment names.
+@end deffn
+
+@node Analyzing the Software, Running Tests, Working Environments, Top
+@chapter Analyzing the Software
+
+Reading software is complicated, especially when it is spread over
+many files.  Professional programmers often use tools like @code{grep}
+and Integrated Development Environments to help them understand how
+the parts are connected to one another.
+
+The software manager maintains an index of definitions and references
+showing where a symbol is given a definition and where it is used.
+The commands in this section can be used to explore that index.  The
+@var{name} arguments to these commands must be symbols.  The
+@var{filename} arguments must be filenames that refer to specific
+files in the tree.
+
+@deffn {Manager Command} defining-files name
+Returns a list of the filenames that contain a definition of
+@var{name}.  There may be more than one such file, but those files are
+rarely loaded together.
+@end deffn
+
+@deffn {Manager Command} referring-files name
+Returns a list of the filenames that contain one or more free
+references to @var{name}.
+@end deffn
+
+@deffn {Manager Command} defined-in-file filename
+Returns a list of the symbols that are defined in the file specified
+by @code{filename}.
+@end deffn
+
+@deffn {Manager Command} references-in-file filename
+Returns a list of the symbols that are free references in the file
+specified by @code{filename}.
+@end deffn
+
+@deffn {Manager Command} check-file-analysis
+Checks the analyzed-file index for potential problems.  For example,
+some names are defined in multiple files, which may or may not be a
+problem.
+@end deffn
+
+@deffn {Manager Command} refresh-file-analysis
+This command rebuilds the index used by the other commands in this
+section.  It is not needed unless changes have been made to the
+software tree.  @code{refresh-file-analysis} takes a while to run.
+@end deffn
+
+@node Running Tests, Miscellaneous, Analyzing the Software, Top
+@chapter Running Tests
+
+All of the book's software contains tests that checks that its
+behavior is as expected.  The manager provides several commands to run
+those tests.  Generally these commands do not affect the current
+working environment nor any named working environment.
+
+@deffn {Manager Command} run-tests
+Runs all tests for the current working environment.  This is all of
+the tests for all of the loaded flavors.  The working environment is
+not modified by the tests, but the current contents of the working
+environment, including all changes made since loading, will be used
+when running the tests.
+@end deffn
+
+@deffn {Manager Command} run-all-tests flavor @dots{}
+Runs the tests for the specified @var{flavor}s.  If no @var{flavor}s
+are specified, runs the tests for all flavors.
+
+These tests are run in hermetic environments: for each flavor, a new
+working environment is created, that flavor is loaded into it, and
+that flavor's tests are run.  Since the tests all run in independent
+environments, they don't affect one another, nor do they affect any
+other working environment.
+@end deffn
+
+@deffn {Manager Command} show-individual-tests boolean
+Normally when running tests, the individual tests are not shown as
+they run.  Instead only the test files are shown, along with summaries
+of the test results.
+
+The ability to see the individual tests is managed by a flag this
+command sets to the value of @var{boolean}.  If @var{boolean} is true,
+then individual tests are shown, otherwise they are not.  After
+running this command, the flag remains set to @var{boolean} until it
+is changed by a subsequent invocation.
+@end deffn
+
+@node Miscellaneous, Command Index, Running Tests, Top
+@chapter Miscellaneous
+
+The remaining commands are for special situations and are best suited
+to experienced users of MIT/GNU Scheme.
+
+@deffn {Manager Command} manager-environment
+Returns the environment in which the software manager is loaded.  This
+is useful for debugging or modifying the manager itself.
+@end deffn
+
+@deffn {Manager Command} working-environment
+Returns the current working environment, which can then be manipulated
+using MIT/GNU Scheme's environment procedures.
+@end deffn
+
+@deffn {Manager Command} debug-internal-errors boolean
+Controls support for debugging the manager's internal errors.  If
+@code{boolean} is false (the default), any error in the manager is
+caught, its message printed out, and then @code{manage} returns
+normally.  If @code{boolean} is true, an internal error throws an exception
+that stops the manager's evaluation and enters a nested @acronym{REPL}
+in which the error can be debugged.
+
+This command changes an internal flag in the manager, which remains
+set to @var{boolean} until a subsequent use of the command.
+@end deffn
+
+@deffn {Manager Command} load-test-only-files
+Loads the test-only files into the current working environment.
+Useful for debugging tests.
+@end deffn
+
+@page
+
+@node Command Index,  , Miscellaneous, Top
+@unnumbered Command Index
+
+@printindex fn
+
+@bye

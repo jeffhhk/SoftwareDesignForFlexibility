@@ -1,0 +1,39 @@
+\initial {A}
+\entry {\code {add-flavor}}{2}
+\initial {C}
+\entry {\code {check-file-analysis}}{4}
+\entry {\code {command-apropos}}{2}
+\entry {\code {\var {command-name}}}{1}
+\initial {D}
+\entry {\code {debug-internal-errors}}{5}
+\entry {\code {defined-in-file}}{4}
+\entry {\code {defining-files}}{4}
+\initial {E}
+\entry {\code {environment-apropos}}{3}
+\entry {\code {environment-names}}{3}
+\initial {F}
+\entry {\code {flavor-apropos}}{3}
+\initial {H}
+\entry {\code {help}}{1}
+\initial {L}
+\entry {\code {list-flavors}}{3}
+\entry {\code {load-test-only-files}}{5}
+\initial {M}
+\entry {\code {manage}}{1}
+\entry {\code {manager-environment}}{5}
+\initial {N}
+\entry {\code {name-current-environment}}{3}
+\entry {\code {new-environment}}{2}
+\initial {R}
+\entry {\code {references-in-file}}{4}
+\entry {\code {referring-files}}{4}
+\entry {\code {refresh-file-analysis}}{4}
+\entry {\code {remove-environment-name}}{3}
+\entry {\code {run-all-tests}}{4}
+\entry {\code {run-tests}}{4}
+\initial {S}
+\entry {\code {show-individual-tests}}{5}
+\initial {U}
+\entry {\code {use-environment}}{3}
+\initial {W}
+\entry {\code {working-environment}}{5}

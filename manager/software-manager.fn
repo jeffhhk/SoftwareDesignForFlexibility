@@ -1,0 +1,26 @@
+\entry{manage}{1}{\code {manage}}
+\entry{command-name}{1}{\code {\var {command-name}}}
+\entry{help}{1}{\code {help}}
+\entry{command-apropos}{2}{\code {command-apropos}}
+\entry{new-environment}{2}{\code {new-environment}}
+\entry{add-flavor}{2}{\code {add-flavor}}
+\entry{list-flavors}{3}{\code {list-flavors}}
+\entry{flavor-apropos}{3}{\code {flavor-apropos}}
+\entry{name-current-environment}{3}{\code {name-current-environment}}
+\entry{use-environment}{3}{\code {use-environment}}
+\entry{remove-environment-name}{3}{\code {remove-environment-name}}
+\entry{environment-names}{3}{\code {environment-names}}
+\entry{environment-apropos}{3}{\code {environment-apropos}}
+\entry{defining-files}{4}{\code {defining-files}}
+\entry{referring-files}{4}{\code {referring-files}}
+\entry{defined-in-file}{4}{\code {defined-in-file}}
+\entry{references-in-file}{4}{\code {references-in-file}}
+\entry{check-file-analysis}{4}{\code {check-file-analysis}}
+\entry{refresh-file-analysis}{4}{\code {refresh-file-analysis}}
+\entry{run-tests}{4}{\code {run-tests}}
+\entry{run-all-tests}{4}{\code {run-all-tests}}
+\entry{show-individual-tests}{5}{\code {show-individual-tests}}
+\entry{manager-environment}{5}{\code {manager-environment}}
+\entry{working-environment}{5}{\code {working-environment}}
+\entry{debug-internal-errors}{5}{\code {debug-internal-errors}}
+\entry{load-test-only-files}{5}{\code {load-test-only-files}}

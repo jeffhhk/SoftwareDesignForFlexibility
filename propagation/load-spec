@@ -1,0 +1,79 @@
+#| -*-Scheme-*-
+
+Copyright (C) 2019, 2020, 2021 Chris Hanson and Gerald Jay Sussman
+
+This file is part of SDF.  SDF is software supporting the book
+"Software Design for Flexibility", by Chris Hanson and Gerald Jay
+Sussman.
+
+SDF is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+SDF is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with SDF.  If not, see <https://www.gnu.org/licenses/>.
+
+|#
+
+;; -*-Scheme-*-
+(define-load-spec propagation
+  ("generics" from "user-defined-types")
+  ("tagging" from "user-defined-types")
+  ("predicates" from "user-defined-types" override "common/predicate-metadata")
+  ("templates" from "user-defined-types")
+  ("values" from "user-defined-types")
+  ("tags" from "user-defined-types")
+  ("graph" from "pattern-matching-on-graphs")
+  ("arith" from "common")
+  ("numeric-arith" from "common")
+  ;; ("standard-arith" from "combining-arithmetics")
+  ;; ("function-variants" from "combining-arithmetics")
+  ;; ("generic-arith" from "generic-procedures")
+  ("layered-data" from "layers")
+  ("support-layer" from "dependencies")
+  ("support-sets" from "dependencies")
+
+  "hierarchy"
+  "data-model"
+
+  "support-extra"
+  "premises"
+  "reasons"
+  "value-sets"
+
+  "propagators"
+  "cells"
+  "scheduler"
+
+  "primitive-propagators"
+  ("sugar" syntax #t)
+  "constraint-propagators"
+
+  "search"
+  "ui"
+
+  ;; Testing support
+  "examples/puzzle-utilities"
+  "examples/example-support"
+  "examples/time"
+  "examples/intervals"
+  "examples/hms-dms-radians"            ; from scmutils
+  ("examples/examples" inline-test? #t)
+  ("text-code" inline-test? #t)
+
+  ;;"utils"                                ; must be loaded first!
+  ;;"eq-properties"                        ; from scmutils
+  ;;"genops"
+  ;; "plunk-and-solve"             ; needs scmutils for solver
+  ;;"examples/actual-debugging-examples"
+  ;;"examples/electric"
+  )
+
+;;; ((access initialize-scheduler user-propagator-environment))
+;;; (ge user-propagator-environment)

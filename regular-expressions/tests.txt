@@ -1,0 +1,19 @@
+[00]. abc
+[01]. aac
+[02]. acc
+[03]. zzzaxcqqq
+[04]. abdabec
+
+[05]. foo
+[06]. bar
+[07]. foo bar baz quux
+[08]. anything containing them
+
+[09]. catdogcat
+[10]. catcatdogdog
+[11]. dogdogcatdogdog
+[12]. catcatcatdogdogdog
+
+[13]. acatdogdogcats
+[14]. ifacatdogdogs
+[15]. acatdogdogsme

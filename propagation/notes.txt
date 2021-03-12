@@ -1,0 +1,27 @@
+What causes the loss of a non-hypothetical premise from the support of
+a value due to combination with hypotheticals?  See "test-amb.scm".
+That is wrong.
+
+One way is that premise was combined with a hypothetical at some point
+and was then merged with that value supported by the hypothetical
+itself.  Indeed, the shorter support "better" except that the value
+supported by the hypothetical, by itself lost the need for the
+original supporting premise.  It is not obvious how this can happen.
+
+The problem is probably more complex.  If a non-hypothetical premise
+drives a hypothetical out by a contradiction, it seems that the nogood
+set containing that premise should be part of the support for things
+that are derived from the alternative.  Perhaps this is actually
+independent of the non-hypothetical/hypothetical distinction and it is
+a failure of capturing the real support of those conclusions.  This
+seems like an actual bug in the algorithm.
+
+
+Additonally, perhaps there is some problem with comparing the strength
+of support of support sets...  I am not sure...
+
+Comparing support sets.
+
+Support set A is stronger support than support set B
+
+     A is a proper subset of B

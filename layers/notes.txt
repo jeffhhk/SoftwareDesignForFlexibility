@@ -1,0 +1,9 @@
+* Need to figure out a better way to specify arithmetic layers without
+  using lists.
+
+* It should also be possible to make an arithmetic layer without an
+  arithmetic backing it.
+
+* Coderef all the new text.
+
+* Simpler test/example format.

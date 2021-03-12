@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+find * -type f \
+     \! \( -name '*~' -o -name '*#' -o -name '#*' -o -name TAGS \) \
+    | sort \
+    | xargs etags

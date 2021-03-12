@@ -1,0 +1,21 @@
+* When eliding merges in decode-reason, we should identify cell names
+  and pass them through to the next layer.  Otherwise the values don't
+  have context that they would otherwise have.
+
+* When not eliding merges, the identified cell names are incorrect for
+  spst-switch and conditional, because merge-modified gets the wrong
+  args.  We need to pass it the relevant cells or cell names.
+
+* Change propagator, primitive-propagator, and compound-propagator to
+  have name as first argument.
+
+done
+
+* Figure out a more general method for matching elided parts of expressions.
+  Maybe a recursive term rewriter?
+* Split compound-propagator into one of two parts depending on inputs.
+* Don't pass me to propagator's to-do.  Instead bind it as current reason source.
+* Maybe fold with-current-reason-source into cell-merge.
+* Rename cell-merge -> merge-cell-values?
+* merge is almost, but not quite, correct.  It needs to preserve
+  unsupported fields in the content.
