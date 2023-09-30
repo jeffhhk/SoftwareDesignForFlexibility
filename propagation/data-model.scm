@@ -43,9 +43,28 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
 (define value-implies?
   (simple-generic-procedure 'value-implies? 2 eqv?))
 
+#|
+;;; Redundant code that causes trouble...  
+;;; See common/utils.scm
+
+(define (close-enuf? h1 h2 #!optional ulps)
+  (let ((ulps (if (default-object? ulps) 100 ulps)))
+    (<= (magnitude (- h1 h2))
+        (* .5 (* ulps microcode-id/floating-epsilon)
+           (+ (magnitude h1) (magnitude h2) 2.0)))))
+
+(define (n:equivalent? x y)
+  (or (eqv? x y)
+      (close-enuf? x y)))
+
 (define-generic-procedure-handler value-implies?
   (match-args n:number? n:number?)
-  equivalent?)
+  n:equivalent?)
+|#
+
+(define-generic-procedure-handler value-implies?
+  (match-args n:number? n:number?)
+  ~=?)
 
 (define unusable-value?
   (simple-generic-procedure 'unusable-value? 1

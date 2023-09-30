@@ -21,6 +21,29 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
 
 |#
 
+#| -*-Scheme-*-
+
+Copyright (C) 2019, 2020, 2021 Chris Hanson and Gerald Jay Sussman
+
+This file is part of SDF.  SDF is software supporting the book
+"Software Design for Flexibility", by Chris Hanson and Gerald Jay
+Sussman.
+
+SDF is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+SDF is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with SDF.  If not, see <https://www.gnu.org/licenses/>.
+
+|#
+
 (register-predicate! vector? 'vector)
 
 (define (ensure-vector-lengths-match vecs)
@@ -106,26 +129,33 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
                (operation-union
                 operator
                 (make-operation operator
+                                (all-args (operator-arity operator)
+                                          vector?)
+                                dot-product)
+                (make-operation operator
                                 (match-args component-predicate vector?)
                                 left-scalar-product)
                 (make-operation operator
                                 (match-args vector? component-predicate)
-                                right-scalar-product)
-                (make-operation operator
-                                (all-args (operator-arity operator)
-                                          vector?)
-                                dot-product)))
-              ((magnitude)
-               (make-operation operator
-                               (all-args (operator-arity operator)
-                                         vector?)
-                               magnitude))
+                                right-scalar-product)))
               ((negate)
                (make-operation operator
                                (all-args (operator-arity operator)
                                          vector?)
                                (vector-element-wise negate)))
-              (else #f))))))))
+              ((magnitude)
+               (make-operation operator
+                               (all-args (operator-arity operator)
+                                         vector?)
+                               magnitude))
+              (else
+               (make-operation operator
+                               (any-arg (operator-arity operator)
+                                        vector?
+                                        component-predicate)
+                               (lambda args
+                                 (error "Don't know how to "
+                                        operator args)))))))))))
 
 #|
 (define combined-arithmetic
@@ -163,13 +193,23 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
 ;Value: 5
 
 
-;;; These should also work with symbols, element-wise:
+;;; These also work with symbols, element-wise:
 
 (+ #(1 2 3) #(4 a 6))
 ;Value: #(5 (+ 2 a) 9)
 
+
+(* 'a (+ #(1 2 3) #(4 a 6)))
+;Value: #((* a 5) (* a (+ 2 a)) (* a 9))
+
 (magnitude #(1 2 a))
 ;Value: (sqrt (+ 5 (* a a)))
+
+((magnitude (vector sin cos)) 3)
+;Value: .9999999999999999
+
+((magnitude (vector sin cos)) 'a)
+;Value: (sqrt (+ (* (sin a) (sin a)) (* (cos a) (cos a))))
 
 (define square (lambda (x) (* x x)))
 

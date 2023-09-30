@@ -84,7 +84,7 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
         (let ((r (parse-expectations (cdr exprs))))
           (let ((expectations (car r))
                 (rest (cadr r)))
-            (cons (cons to-eval (reverse expectations))
+            (cons (cons to-eval expectations)
                   (group-expressions rest)))))
       '()))
 
@@ -197,11 +197,16 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
                   (get-output-string! output-port)
                   value)))
             (cons (car *current-group*)
-                  (filter-map (lambda (expectation)
-                                (apply (car expectation)
-                                       context
-                                       (cdr expectation)))
-                              (cdr *current-group*)))))))))
+                  (fold (lambda (expectation failures)
+                          (let ((failure
+                                 (apply (car expectation)
+                                        context
+                                        (cdr expectation))))
+                            (if failure
+                                (cons failure failures)
+                                failures)))
+                        '()
+                        (cdr *current-group*)))))))))
 
 (define show-test-expressions? #f)
 

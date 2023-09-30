@@ -298,13 +298,15 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
 (define-generic-procedure-handler a:handle-operand
   (match-args lazy? executor? environment? success? failure?)
   (lambda (parameter operand-exec environment succeed fail)
+    (declare (ignore parameter))
     (succeed (postpone operand-exec environment) fail)))
 
 (define-generic-procedure-handler a:handle-operand
   (match-args lazy-memo? executor? environment?
               success? failure?)
   (lambda (parameter operand-exec environment succeed fail)
-     (succeed (postpone-memo operand-exec environment) fail)))
+    (declare (ignore parameter))
+    (succeed (postpone-memo operand-exec environment) fail)))
 
 (define-generic-procedure-handler procedure-parameter-name
   (match-args pair?)

@@ -44,7 +44,7 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
                   load-specs))
 
     (define (get-test-only-file-specs)
-      (filespecs-difference*
+      (filespecs-union*
        (map load-spec-test-only-filespecs
             load-specs)))
 

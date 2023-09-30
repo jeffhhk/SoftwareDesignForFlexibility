@@ -75,11 +75,11 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
       set
       (make-value-set
        (lset-adjoin equivalent?
-                    ;; Potential optimization:
-                    ;; (remove (lambda (old-elt)
-                    ;;           (element-subsumes? elt old-elt))
-                    ;;         (value-set-elements set))
-                    (value-set-elements set)
+                    (remove (lambda (old-elt)
+                              (element-subsumes? elt old-elt))
+                            (value-set-elements set))
+                    ;; This seems to work as well.  Why?
+                    ;; (value-set-elements set)
                     elt))))
 
 (define (element-subsumes? elt1 elt2)

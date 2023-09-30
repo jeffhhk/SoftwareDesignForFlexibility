@@ -282,6 +282,19 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
 
 (define (filespecs-difference . filespecs)
   (filespecs-difference* filespecs))
+
+(define (filespecs-union* filespecs)
+  (reduce (lambda (fs acc)
+            (lset-union (lambda (fs1 fs2)
+                          (pathname=? (filespec-filename fs1)
+                                      (filespec-filename fs2)))
+                        fs
+                        acc))
+          '()
+          filespecs))
+
+(define (filespecs-union . filespecs)
+  (filespecs-union* filespecs))
 
 (define (compute-flavor-load-specs)
   (let ((specs
@@ -384,5 +397,5 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
      compiling-to-execution-procedures
      exploratory-behavior)
     (propagation continuations-to-amb)
-    (pattern-matching-on-graphs checkers-old checkers-new)
+    (pattern-matching-on-graphs abstracting-a-domain:factoring)
     (wrappers layers)))

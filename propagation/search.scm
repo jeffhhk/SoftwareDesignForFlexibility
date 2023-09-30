@@ -144,8 +144,8 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
   (let ((nogood
          (support-layer-value (cell-strongest cell))))
     (if (support-set-empty? nogood)
-        (error "Contradiction must be supported:"
-               contradiction-set))
+        (error "Contradiction in cell must be supported:"
+               cell))
     (process-contradictions (list nogood) cell)
     ;; Elide tail recursion for debugging.
     ;;'ok

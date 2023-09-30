@@ -584,37 +584,36 @@
       differential?
       diff-factor?
       match-args
-      equal?
-      +
-      cons
-      cddr
       not
-      null?
       eqv?
-      car
+      null?
+      cddr
+      cons
+      +
       cadr
+      equal?
       cdr
+      number?
+      =
+      car
       diff-term>?
-      append-map
-      diff-coefficient
+      map
+      diff-factors
       substitute
       diff-factor>?
-      list
+      diff-coefficient
       make-diff-term
-      diff-factors
-      =
-      number?
       diff-terms
       sort
       make-differential))
-   (defined (replace-dx-differential duplicate-factors? combine-like-terms)))
+   (defined (replace-dx-differential combine-like-terms duplicate-factors?)))
   ((filename "automatic-differentiation/simplifier")
    (free
     (rule-simplifier sqrt
                      expt
                      /
-                     *
                      -
+                     *
                      append-map
                      +
                      map
@@ -688,6 +687,448 @@
                    differential
                    real->diff-terms
                    simplify)))
+  ((filename "better-layering/analyze")
+   (free
+    (advanced-memo? advanced-value
+                    postponed-memo?
+                    advance-memo!
+                    postponed?
+                    postponed-environment
+                    postponed-expression
+                    lazy-memo?
+                    postpone-memo
+                    executor?
+                    lazy?
+                    postpone
+                    procedure-parameter-name
+                    complex-procedure-environment
+                    complex-procedure-body
+                    n:=
+                    complex-procedure-parameters
+                    length
+                    not
+                    extend-environment
+                    simple-procedure-parameters
+                    simple-procedure-environment
+                    simple-procedure-body
+                    apply-primitive-procedure
+                    l:deliver-continuation
+                    environment?
+                    executors?
+                    complex-compound-procedure?
+                    strict-primitive-procedure?
+                    call/cc?
+                    simple-compound-procedure?
+                    register-predicate!
+                    procedure?
+                    cons
+                    let*?
+                    let*->let-nest
+                    let?
+                    let->combination
+                    cond?
+                    cond->if
+                    compose
+                    definition?
+                    define-variable!
+                    definition-variable
+                    definition-value
+                    assignment?
+                    set-variable-value!
+                    list
+                    assignment-variable
+                    assignment-value
+                    begin?
+                    reduce-right
+                    begin-actions
+                    if?
+                    *if-predicate-value*
+                    *if-c/a-value*
+                    base-value
+                    layered-thing?
+                    if-predicate
+                    if-consequent
+                    if-alternative
+                    lambda?
+                    make-simple-compound-procedure
+                    make-complex-compound-procedure
+                    lambda-parameters
+                    lambda-body
+                    null?
+                    pair?
+                    cdr
+                    car
+                    symbol?
+                    quoted?
+                    text-of-quotation
+                    variable?
+                    lookup-variable-value
+                    define-generic-procedure-handler
+                    self-evaluating?
+                    match-args
+                    extend-continuation
+                    operator
+                    operands
+                    map
+                    simple-generic-procedure
+                    application?
+                    barf
+                    error
+                    make-executor))
+   (defined
+    (l:eval analyze
+            default-analyze
+            l:analyze
+            analyze-application
+            l:execute-strict
+            analyze-self-evaluating
+            analyze-variable
+            analyze-quoted
+            simple-parameter-list?
+            analyze-lambda
+            analyze-if
+            analyze-begin
+            analyze-assignment
+            analyze-definition
+            l:execute-operands
+            map-continuation
+            continuation?
+            default-apply
+            l:apply
+            primitive-or-simple-procedure?
+            general-procedure?
+            l:apply-strict
+            l:compound-apply
+            l:handle-operand
+            l:advance)))
+  ((filename "better-layering/applyer")
+   (free
+    (get-layer-value get-layer-value-or-default
+                     strict-primitive-procedure?
+                     base-value
+                     error
+                     simple-compound-procedure?
+                     l:apply-strict
+                     procedure-layer-or-default
+                     cons
+                     memq
+                     any
+                     for-each
+                     *layered-procedure-values*
+                     apply
+                     lset-union
+                     eq?
+                     available-layers
+                     map
+                     *end-of-layers*
+                     define-generic-procedure-handler
+                     l:apply
+                     continuation?
+                     environment?
+                     executors?
+                     layered-thing?
+                     match-args
+                     extend-continuation
+                     l:execute-strict
+                     l:execute-operands))
+   (defined
+    (l:apply-layered l:dispatch
+                     layers-processor
+                     layer-applicator
+                     base-layer-applicator
+                     layer-args
+                     base-and-layer-args)))
+  ((filename "better-layering/call-cc") (free (list l:apply-strict))
+                                        (defined (l:deliver-continuation)))
+  ((filename "better-layering/extension")
+   (free
+    (not filter
+         error
+         base-value
+         equal?
+         bkpt
+         cdr
+         set-car!
+         cons
+         cadr
+         assq
+         list
+         +
+         -
+         for-each
+         eq?
+         layered-thing?
+         available-layers
+         make-layered-thing
+         =))
+   (defined
+    (extend-continuation *layered-procedure-values*
+                         layered-procedure-values?
+                         *if-predicate-value*
+                         if-predicate-value?
+                         *if-c/a-value*
+                         if-c/a-value?
+                         *end-of-layers*
+                         end-of-layers?
+                         *unset*
+                         unset?
+                         *ignore-value*
+                         ignore-value?
+                         merge-handler
+                         if-predicate-handler
+                         if-c/a-handler
+                         declare-merge-handler
+                         declare-if-predicate-handler
+                         declare-if-c/a-handler
+                         base-merge-handler
+                         *merge-handlers*
+                         *if-predicate-handlers*
+                         if-c/a-base-handler
+                         *if-c/a-handlers*
+                         make-dictionary)))
+  ((filename "better-layering/initialization")
+   (free
+    (with-new-layer! lookup-variable-value
+                     define-variable!
+                     eq?
+                     error
+                     make-global-environment))
+   (defined
+    (the-global-environment initialize-repl!
+                            check-repl-initialized
+                            global-environment-define
+                            install-layer-handler!)))
+  ((filename "better-layering/layered-data")
+   (free
+    (not new-layer
+         for-each
+         set-car!
+         *ignore-value*
+         cons
+         thing
+         assq
+         error
+         null?
+         cdr
+         map
+         cadr
+         list
+         register-predicate!
+         eq?
+         car
+         pair?))
+   (defined
+    (layered-thing? make-layered-thing
+                    layered-thing
+                    available-layers
+                    with-new-layer!
+                    make-layered-result
+                    layer-value
+                    get-layer-value
+                    get-layer-value-or-default
+                    get-layer-value-default
+                    procedure-layer-or-default
+                    *layer-value-defaults*
+                    set-default-layer-value!
+                    *layered-procedure-defaults*
+                    layered-procedure-default
+                    declare-layered-procedure-default
+                    make-base-value
+                    base-value
+                    with-additional-layers
+                    *novalue*
+                    has-layer-value?
+                    layers-available
+                    make-layer-entry
+                    layer-entry-layer-name
+                    layer-entry-value
+                    layer-entry
+                    new-layer-value)))
+  ((filename "better-layering/provenance")
+   (free
+    (assv caar
+          zero?
+          base-and-layer-args
+          sort
+          eqv?
+          car
+          filter
+          length
+          <
+          cdr
+          cdar
+          null?
+          not
+          install-layer-handler!
+          declare-layered-procedure-default
+          layer-args
+          declare-if-c/a-handler
+          declare-if-predicate-handler
+          declare-merge-handler
+          unset?
+          set-default-layer-value!
+          map
+          get-layer-value-or-default
+          lset-union
+          apply
+          layered-thing?
+          base-value
+          layered-thing
+          has-layer-value?
+          lset-adjoin
+          equal?
+          list
+          general-procedure?
+          with-new-layer!
+          make-base-value
+          check-repl-initialized))
+   (defined
+    (signed add-signature-to-procedure
+            unset->empty
+            union-contributions
+            union-contributions*
+            provenance-merge
+            only-provenance-layer-args
+            provenance:*
+            provenance:/
+            provenance:atan)))
+  ((filename "better-layering/repl")
+   (free
+    (advanced-memo? base-value
+                    define-generic-procedure-handler
+                    deferred?
+                    match-args
+                    l:advance
+                    simple-generic-procedure
+                    user-initial-environment
+                    member
+                    delete
+                    append
+                    layered-thing?
+                    available-layers
+                    display
+                    layer-value
+                    for-each
+                    simple-compound-procedure?
+                    procedure-parameters
+                    list
+                    call/cc?
+                    complex-compound-procedure?
+                    strict-primitive-procedure?
+                    not
+                    eof-object?
+                    read
+                    call-with-input-file
+                    prompt-for-command-expression
+                    condition?
+                    standard-warning-handler
+                    ignore-errors
+                    shallow-fluid-bind
+                    check-repl-initialized
+                    error
+                    the-global-environment
+                    l:eval
+                    extend-continuation))
+   (defined
+    (*in-repl* repl
+               *debugging*
+               g:read
+               load-library
+               show-result
+               base-last
+               write
+               write-line
+               pp
+               doit!)))
+  ((filename "better-layering/rtdata-extra")
+   (free
+    (null? error
+           vector
+           pair?
+           cdr
+           car
+           cons
+           symbol?
+           list
+           procedure-parameters
+           procedure-body
+           register-predicate!
+           %record?
+           %record-ref
+           eq?
+           guarantee
+           record-predicate
+           record-constructor
+           make-record-type))
+   (defined
+    (<*simple-compound-procedure> make-simple-compound-procedure
+                                  simple-compound-procedure?
+                                  simple-procedure-parameters
+                                  simple-procedure-body
+                                  simple-procedure-environment
+                                  <*complex-compound-procedure>
+                                  make-complex-compound-procedure
+                                  complex-compound-procedure?
+                                  complex-procedure-parameters
+                                  complex-procedure-body
+                                  complex-procedure-environment
+                                  procedure-printable-representation
+                                  compound-procedure?
+                                  extend-environment
+                                  call/cc
+                                  call/cc?)))
+  ((filename "better-layering/units-layer")
+   (free
+    (/ every
+       cddr
+       length
+       map
+       -
+       cadr
+       caar
+       cdr
+       zero?
+       list
+       cadar
+       +
+       reduce
+       install-layer-handler!
+       layer-args
+       cons
+       null?
+       apply
+       lset=
+       *novalue*
+       declare-merge-handler
+       layer-value
+       equal?
+       error
+       unset?
+       not
+       declare-layered-procedure-default
+       *ignore-value*
+       set-default-layer-value!
+       eq?
+       layered-thing?
+       layered-thing
+       make-base-value
+       with-new-layer!
+       symbol<?
+       car
+       sort
+       check-repl-initialized))
+   (defined
+    (with-units *unitless-alist*
+                unitless-alist?
+                unitless?
+                all-inputs-and-output-same-units
+                multiply-input-units
+                units:*
+                negate-exponents
+                divide-input-units
+                all-inputs-have-same-units-output-unitless
+                all-inputs-and-output-are-unitless
+                units:sqrt)))
   ((filename "combinators/function-combinators")
    (free
     (map list-ref
@@ -1494,9 +1935,10 @@
                open-output-string
                with-output-to-port
                get-output-string!
-               filter-map
+               fold
                apply
                cpp
+               reverse
                shallow-fluid-bind
                pp
                cadddr
@@ -1515,7 +1957,6 @@
                cdr
                cadr
                car
-               reverse
                read-file
                pathname-default-type
                default-object
@@ -1883,18 +2324,18 @@
         pop!
         make-parameter
         make-deque
+        list
+        cons
         parameterize*
-        car
+        null?
         +
         within-continuation
-        call/cc
-        ill-formed-syntax
-        list
         map
-        cons
-        null?
+        call/cc
+        syntax-rules:match-datum
         cdr
-        pair?))
+        ill-formed-syntax
+        syntax-rules:expand-template))
    (defined
     (amb *number-of-calls-to-fail*
          amb-list
@@ -2508,6 +2949,196 @@
                              add-generic-arith-constants!
                              add-generic-arith-operations!
                              extend-generic-arithmetic!)))
+  ((filename "interpreter-with-continuations/analyze")
+   (free
+    (advanced-memo? advanced-value
+                    postponed-memo?
+                    advance-memo!
+                    postponed?
+                    postponed-environment
+                    postponed-expression
+                    lazy-memo?
+                    postpone-memo
+                    executor?
+                    lazy?
+                    postpone
+                    procedure-parameter-name
+                    complex-procedure-environment
+                    complex-procedure-body
+                    n:=
+                    complex-procedure-parameters
+                    length
+                    not
+                    extend-environment
+                    simple-procedure-parameters
+                    simple-procedure-environment
+                    simple-procedure-body
+                    apply-primitive-procedure
+                    environment?
+                    executors?
+                    complex-compound-procedure?
+                    strict-primitive-procedure?
+                    call/cc?
+                    simple-compound-procedure?
+                    register-predicate!
+                    procedure?
+                    cons
+                    let*?
+                    let*->let-nest
+                    let?
+                    let->combination
+                    cond?
+                    cond->if
+                    compose
+                    definition?
+                    define-variable!
+                    definition-variable
+                    definition-value
+                    assignment?
+                    list
+                    set-variable-value!
+                    assignment-variable
+                    assignment-value
+                    begin?
+                    reduce-right
+                    begin-actions
+                    if?
+                    if-predicate
+                    if-consequent
+                    if-alternative
+                    lambda?
+                    make-simple-compound-procedure
+                    make-complex-compound-procedure
+                    lambda-parameters
+                    lambda-body
+                    null?
+                    pair?
+                    cdr
+                    car
+                    symbol?
+                    quoted?
+                    text-of-quotation
+                    variable?
+                    lookup-variable-value
+                    define-generic-procedure-handler
+                    self-evaluating?
+                    match-args
+                    operator
+                    operands
+                    map
+                    simple-generic-procedure
+                    application?
+                    barf
+                    error
+                    make-executor))
+   (defined
+    (c:eval analyze
+            default-analyze
+            c:analyze
+            analyze-application
+            c:execute-strict
+            analyze-self-evaluating
+            analyze-variable
+            analyze-quoted
+            simple-parameter-list?
+            analyze-lambda
+            analyze-if
+            analyze-begin
+            analyze-assignment
+            analyze-definition
+            c:execute-operands
+            map-continuation
+            continuation?
+            default-apply
+            c:apply
+            primitive-or-simple-procedure?
+            general-procedure?
+            c:apply-strict
+            c:compound-apply
+            c:handle-operand
+            c:advance
+            c:deliver-continuation)))
+  ((filename "interpreter-with-continuations/initialization")
+   (free (define-variable! eq? error make-global-environment))
+   (defined
+    (the-global-environment initialize-repl!
+                            check-repl-initialized
+                            global-environment-define)))
+  ((filename "interpreter-with-continuations/repl")
+   (free
+    (advanced-memo? define-generic-procedure-handler
+                    deferred?
+                    match-args
+                    c:advance
+                    simple-generic-procedure
+                    user-initial-environment
+                    strict-primitive-procedure?
+                    display
+                    complex-compound-procedure?
+                    call/cc?
+                    list
+                    procedure-parameters
+                    simple-compound-procedure?
+                    not
+                    eof-object?
+                    read
+                    call-with-input-file
+                    prompt-for-command-expression
+                    condition?
+                    standard-warning-handler
+                    ignore-errors
+                    shallow-fluid-bind
+                    check-repl-initialized
+                    error
+                    the-global-environment
+                    c:eval))
+   (defined
+    (*in-repl* repl
+               *debugging*
+               g:read
+               load-library
+               show-result
+               write
+               write-line
+               pp
+               doit!)))
+  ((filename "interpreter-with-continuations/rtdata-extra")
+   (free
+    (null? error
+           vector
+           pair?
+           cdr
+           car
+           cons
+           symbol?
+           list
+           procedure-parameters
+           procedure-body
+           register-predicate!
+           %record?
+           %record-ref
+           eq?
+           guarantee
+           record-predicate
+           record-constructor
+           make-record-type))
+   (defined
+    (<*simple-compound-procedure> make-simple-compound-procedure
+                                  simple-compound-procedure?
+                                  simple-procedure-parameters
+                                  simple-procedure-body
+                                  simple-procedure-environment
+                                  <*complex-compound-procedure>
+                                  make-complex-compound-procedure
+                                  complex-compound-procedure?
+                                  complex-procedure-parameters
+                                  complex-procedure-body
+                                  complex-procedure-environment
+                                  procedure-printable-representation
+                                  compound-procedure?
+                                  extend-environment
+                                  call/cc
+                                  call/cc?)))
   ((filename "layers/layered-data")
    (free
     (make-arithmetic arithmetic-name
@@ -2567,6 +3198,9 @@
          make-arithmetic
          default-object
          simple-operation
+         make-operation
+         number?
+         match-args
          operator-codomain
          operator-arity
          n:=
@@ -3606,7 +4240,6 @@
        support-layer-value
        cell-strongest
        error
-       contradiction-set
        values
        support-set-empty?
        support-set-filter
@@ -3672,21 +4305,18 @@
     (append cadadr
             cadr
             caddr
+            list
+            cons
             caadr
             cdadr
             cddr
             cell?
             make-cell
             add-cell-content!
-            cons
-            map
-            equal?
             ill-formed-syntax
-            list
-            car
-            null?
             cdr
-            pair?))
+            syntax-rules:match-datum
+            syntax-rules:expand-template))
    (defined
     (define-cell let-cells
       normalize-let-clauses
@@ -5358,6 +5988,7 @@
                       "user-defined-types/adventure-substrate"
                       "propagation/value-sets"
                       "pattern-matching-on-graphs/graph"
+                      "interpreter-with-continuations/rtdata-extra"
                       "generic-interpreter/shared-rtdata"
                       "continuations/analyze-extra"
                       "continuations-to-amb/deque"
@@ -5366,6 +5997,7 @@
                       "common/package"
                       "common/generic-procedures"
                       "common/arith"
+                      "better-layering/rtdata-extra"
                       "abstracting-a-domain/pmove"
                       "abstracting-a-domain/piece"
                       "abstracting-a-domain/game"
@@ -5388,6 +6020,7 @@
                       "user-defined-types/adventure-substrate"
                       "propagation/value-sets"
                       "pattern-matching-on-graphs/graph"
+                      "interpreter-with-continuations/rtdata-extra"
                       "generic-interpreter/shared-rtdata"
                       "continuations/analyze-extra"
                       "continuations-to-amb/deque"
@@ -5396,6 +6029,7 @@
                       "common/package"
                       "common/generic-procedures"
                       "common/arith"
+                      "better-layering/rtdata-extra"
                       "abstracting-a-domain/pmove"
                       "abstracting-a-domain/piece"
                       "abstracting-a-domain/game"
@@ -5441,19 +6075,49 @@
   ((name *current-group*) (definers ("common/simple-tests")) (referrers ()))
   ((name *current-propagator*) (definers ("propagation/scheduler"))
                                (referrers ()))
+  ((name *debugging*)
+   (definers ("interpreter-with-continuations/repl" "better-layering/repl"))
+   (referrers ()))
   ((name *debugging-contradiction*) (definers ("propagation/search"))
                                     (referrers ()))
   ((name *diff-termlists) (definers ("automatic-differentiation/derivatives"))
                           (referrers ()))
   ((name *diff-terms) (definers ("automatic-differentiation/derivatives"))
                       (referrers ()))
+  ((name *end-of-layers*) (definers ("better-layering/extension"))
+                          (referrers ("better-layering/applyer")))
   ((name *groups-to-test*) (definers ("common/simple-tests")) (referrers ()))
+  ((name *if-c/a-handlers*) (definers ("better-layering/extension"))
+                            (referrers ()))
+  ((name *if-c/a-value*) (definers ("better-layering/extension"))
+                         (referrers ("better-layering/analyze")))
+  ((name *if-predicate-handlers*) (definers ("better-layering/extension"))
+                                  (referrers ()))
+  ((name *if-predicate-value*) (definers ("better-layering/extension"))
+                               (referrers ("better-layering/analyze")))
+  ((name *ignore-value*)
+   (definers ("better-layering/extension"))
+   (referrers ("better-layering/units-layer" "better-layering/layered-data")))
+  ((name *in-repl*)
+   (definers ("interpreter-with-continuations/repl" "better-layering/repl"))
+   (referrers ()))
   ((name *last-value-of-run*) (definers ("propagation/scheduler"))
                               (referrers ("propagation/ui")))
+  ((name *layer-value-defaults*) (definers ("better-layering/layered-data"))
+                                 (referrers ()))
+  ((name *layered-procedure-defaults*)
+   (definers ("better-layering/layered-data"))
+   (referrers ()))
+  ((name *layered-procedure-values*) (definers ("better-layering/extension"))
+                                     (referrers ("better-layering/applyer")))
+  ((name *merge-handlers*) (definers ("better-layering/extension"))
+                           (referrers ()))
   ((name *my-parent*)
    (definers ("propagation/hierarchy"))
    (referrers
     ("propagation/propagators" "propagation/premises" "propagation/cells")))
+  ((name *novalue*) (definers ("better-layering/layered-data"))
+                    (referrers ("better-layering/units-layer")))
   ((name *number-of-calls-to-fail*)
    (definers ("propagation/search" "continuations-to-amb/ambsch"))
    (referrers ("propagation/scheduler" "propagation/examples/time")))
@@ -5468,6 +6132,9 @@
                                       (referrers ()))
   ((name *trace-premise-transitions?*) (definers ("propagation/premises"))
                                        (referrers ()))
+  ((name *unitless-alist*) (definers ("better-layering/units-layer"))
+                           (referrers ()))
+  ((name *unset*) (definers ("better-layering/extension")) (referrers ()))
   ((name +)
    (definers ())
    (referrers
@@ -5481,6 +6148,8 @@
                       "continuations-to-amb/ambsch"
                       "common/pretty-printer"
                       "combinators/function-combinators"
+                      "better-layering/units-layer"
+                      "better-layering/extension"
                       "automatic-differentiation/simplifier"
                       "automatic-differentiation/replace-dx-differential"
                       "automatic-differentiation/handlers"
@@ -5502,6 +6171,8 @@
                       "pattern-matching-on-graphs/chess-board"
                       "common/pretty-printer"
                       "combinators/function-combinators"
+                      "better-layering/units-layer"
+                      "better-layering/extension"
                       "automatic-differentiation/utils"
                       "automatic-differentiation/simplifier"
                       "automatic-differentiation/handlers"
@@ -5517,6 +6188,7 @@
    (definers ())
    (referrers
     ("wrappers/units" "propagation/examples/hms-dms-radians"
+                      "better-layering/units-layer"
                       "automatic-differentiation/simplifier"
                       "automatic-differentiation/handlers"
                       "abstracting-a-domain/coords")))
@@ -5538,11 +6210,22 @@
      "pattern-matching-on-graphs/chess-board"
      "dependencies/support-layer"
      "combinators/function-combinators"
+     "better-layering/provenance"
      "automatic-differentiation/utils"
      "automatic-differentiation/derivatives"
      "abstracting-a-domain/game-repl")))
+  ((name <*complex-compound-procedure>)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers ()))
   ((name <*compound-procedure>)
    (definers ("generic-interpreter/shared-rtdata"))
+   (referrers ()))
+  ((name <*simple-compound-procedure>)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
    (referrers ()))
   ((name <=)
    (definers ())
@@ -5614,6 +6297,7 @@
      "design-of-the-matcher/matcher"
      "common/pretty-printer"
      "combinators/function-combinators"
+     "better-layering/extension"
      "automatic-differentiation/utils"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/literal-functions"
@@ -5691,6 +6375,8 @@
    (referrers ()))
   ((name add-interval) (definers ("propagation/examples/intervals"))
                        (referrers ()))
+  ((name add-signature-to-procedure) (definers ("better-layering/provenance"))
+                                     (referrers ()))
   ((name add-thing!) (definers ("user-defined-types/adventure-objects"))
                      (referrers ()))
   ((name add-to-breadth-first-search-schedule)
@@ -5726,23 +6412,31 @@
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name advanced-memo?)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/repl"
      "exploratory-behavior/analyze"
      "compiling-to-execution-procedures/repl"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/repl"
+     "better-layering/analyze")))
   ((name advanced-value)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
      "compiling-to-execution-procedures/repl"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name alert-propagator!)
    (definers ("propagation/scheduler"))
    (referrers ("propagation/propagators" "propagation/premises")))
@@ -5785,6 +6479,15 @@
                     (referrers ("propagation/premises")))
   ((name all-combinations) (definers ("automatic-differentiation/utils"))
                            (referrers ()))
+  ((name all-inputs-and-output-are-unitless)
+   (definers ("better-layering/units-layer"))
+   (referrers ()))
+  ((name all-inputs-and-output-same-units)
+   (definers ("better-layering/units-layer"))
+   (referrers ()))
+  ((name all-inputs-have-same-units-output-unitless)
+   (definers ("better-layering/units-layer"))
+   (referrers ()))
   ((name all-king-moves) (definers ("pattern-matching-on-graphs/chess-moves"))
                          (referrers ()))
   ((name all-knight-moves)
@@ -5831,58 +6534,78 @@
                              (referrers ()))
   ((name analyze)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-amb) (definers ("exploratory-behavior/analyze"))
                       (referrers ()))
   ((name analyze-application)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-assignment)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-begin)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-definition)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-if)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-lambda)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-quoted)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-self-evaluating)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name analyze-undoable-assignment)
    (definers ("exploratory-behavior/analyze"))
    (referrers ()))
   ((name analyze-variable)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name ancestry) (definers ("propagation/hierarchy")) (referrers ()))
   ((name annotate-expr) (definers ("unification/type-resolver"))
@@ -5908,6 +6631,7 @@
      "common/match-utils"
      "common/collections"
      "common/applicability"
+     "better-layering/applyer"
      "automatic-differentiation/literal-functions"
      "abstracting-a-domain/checkers-original"
      "abstracting-a-domain/board")))
@@ -5947,6 +6671,7 @@
                                      "pattern-matching-on-graphs/chess-moves"
                                      "common/utils"
                                      "combinators/function-combinators"
+                                     "better-layering/repl"
                                      "automatic-differentiation/utils"
                                      "automatic-differentiation/simplifier"
                                      "abstracting-a-domain/pmove"
@@ -5954,27 +6679,25 @@
   ((name append-map)
    (definers ())
    (referrers
-    ("user-defined-types/values"
-     "user-defined-types/standard-arith"
-     "user-defined-types/predicates"
-     "user-defined-types/functions"
-     "user-defined-types/adventure-substrate"
-     "user-defined-types/adventure-objects"
-     "unification/type-resolver"
-     "regular-expressions/regexp"
-     "propagation/search"
-     "pattern-matching-on-graphs/chess-board"
-     "generic-interpreter/shared-syntax"
-     "common/utils"
-     "common/trie"
-     "common/match-utils"
-     "automatic-differentiation/utils"
-     "automatic-differentiation/simplifier"
-     "automatic-differentiation/replace-dx-differential"
-     "automatic-differentiation/derivatives"
-     "abstracting-a-domain/game-interpreter"
-     "abstracting-a-domain/checkers-shared"
-     "abstracting-a-domain/checkers-original")))
+    ("user-defined-types/values" "user-defined-types/standard-arith"
+                                 "user-defined-types/predicates"
+                                 "user-defined-types/functions"
+                                 "user-defined-types/adventure-substrate"
+                                 "user-defined-types/adventure-objects"
+                                 "unification/type-resolver"
+                                 "regular-expressions/regexp"
+                                 "propagation/search"
+                                 "pattern-matching-on-graphs/chess-board"
+                                 "generic-interpreter/shared-syntax"
+                                 "common/utils"
+                                 "common/trie"
+                                 "common/match-utils"
+                                 "automatic-differentiation/utils"
+                                 "automatic-differentiation/simplifier"
+                                 "automatic-differentiation/derivatives"
+                                 "abstracting-a-domain/game-interpreter"
+                                 "abstracting-a-domain/checkers-shared"
+                                 "abstracting-a-domain/checkers-original")))
   ((name append-map-function) (definers ("user-defined-types/functions"))
                               (referrers ()))
   ((name append-map-object-union) (definers ("user-defined-types/values"))
@@ -6015,9 +6738,11 @@
   ((name application?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name apply)
    (definers ())
    (referrers
@@ -6052,6 +6777,9 @@
                       "combining-arithmetics/standard-arith"
                       "combining-arithmetics/function-variants"
                       "combinators/function-combinators"
+                      "better-layering/units-layer"
+                      "better-layering/provenance"
+                      "better-layering/applyer"
                       "automatic-differentiation/literal-functions"
                       "automatic-differentiation/extractor"
                       "automatic-differentiation/derivatives")))
@@ -6073,9 +6801,11 @@
   ((name apply-primitive-procedure)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name apply-simple-function) (definers ("user-defined-types/functions"))
                                 (referrers ()))
   ((name apply-union-function) (definers ("user-defined-types/functions"))
@@ -6148,21 +6878,27 @@
   ((name assignment-value)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name assignment-variable)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name assignment?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name assoc) (definers ()) (referrers ("common/generic-procedures")))
   ((name assq)
    (definers ())
@@ -6173,6 +6909,8 @@
                                  "common/operators"
                                  "common/generic-procedures"
                                  "common/arith"
+                                 "better-layering/layered-data"
+                                 "better-layering/extension"
                                  "abstracting-a-domain/game")))
   ((name assume) (definers ("automatic-differentiation/simplifier"))
                  (referrers ()))
@@ -6180,7 +6918,8 @@
    (definers ())
    (referrers
     ("user-defined-types/adventure-substrate" "layers/layered-data"
-                                              "common/trie")))
+                                              "common/trie"
+                                              "better-layering/provenance")))
   ((name atan) (definers ())
                (referrers ("automatic-differentiation/handlers")))
   ((name atan-interval) (definers ("propagation/examples/intervals"))
@@ -6196,6 +6935,11 @@
   ((name autonomous-agent?)
    (definers ("user-defined-types/adventure-objects"))
    (referrers ()))
+  ((name available-layers)
+   (definers ("better-layering/layered-data"))
+   (referrers
+    ("better-layering/repl" "better-layering/extension"
+                            "better-layering/applyer")))
   ((name avatar:screen) (definers ("user-defined-types/adventure-objects"))
                         (referrers ()))
   ((name avatar?) (definers ("user-defined-types/adventure-objects"))
@@ -6211,7 +6955,16 @@
                      (referrers ()))
   ((name bag?) (definers ("user-defined-types/adventure-objects"))
                (referrers ()))
+  ((name barf)
+   (definers ())
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
+  ((name base-and-layer-args) (definers ("better-layering/applyer"))
+                              (referrers ("better-layering/provenance")))
+  ((name base-last) (definers ("better-layering/repl")) (referrers ()))
   ((name base-layer) (definers ("layers/layered-data")) (referrers ()))
+  ((name base-layer-applicator) (definers ("better-layering/applyer"))
+                                (referrers ()))
   ((name base-layer-value)
    (definers ("layers/layered-data"))
    (referrers
@@ -6220,6 +6973,15 @@
                               "propagation/data-model"
                               "layers/units"
                               "dependencies/support-layer")))
+  ((name base-merge-handler) (definers ("better-layering/extension"))
+                             (referrers ()))
+  ((name base-value)
+   (definers ("better-layering/layered-data"))
+   (referrers
+    ("better-layering/repl" "better-layering/provenance"
+                            "better-layering/extension"
+                            "better-layering/applyer"
+                            "better-layering/analyze")))
   ((name basic-bishop-move)
    (definers ("pattern-matching-on-graphs/chess-moves"))
    (referrers ()))
@@ -6238,17 +7000,21 @@
   ((name begin-actions)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name begin-expr?) (definers ("unification/type-resolver")) (referrers ()))
   ((name begin-exprs) (definers ("unification/type-resolver")) (referrers ()))
   ((name begin?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name bias?) (definers ("user-defined-types/adventure-substrate"))
                 (referrers ("user-defined-types/adventure-objects")))
   ((name binary-amb)
@@ -6256,7 +7022,8 @@
    (referrers
     ("propagation/examples/puzzle-utilities"
      "propagation/constraint-propagators")))
-  ((name bkpt) (definers ()) (referrers ("propagation/search")))
+  ((name bkpt) (definers ())
+               (referrers ("propagation/search" "better-layering/extension")))
   ((name board-addresses)
    (definers ("pattern-matching-on-graphs/chess-board"))
    (referrers ()))
@@ -6343,19 +7110,44 @@
               (referrers ("propagation/examples/example-support")))
   ((name c:abs) (definers ("propagation/constraint-propagators"))
                 (referrers ("propagation/examples/example-support")))
+  ((name c:advance) (definers ("interpreter-with-continuations/analyze"))
+                    (referrers ("interpreter-with-continuations/repl")))
+  ((name c:analyze) (definers ("interpreter-with-continuations/analyze"))
+                    (referrers ()))
   ((name c:and) (definers ("propagation/constraint-propagators"))
                 (referrers ()))
+  ((name c:apply) (definers ("interpreter-with-continuations/analyze"))
+                  (referrers ()))
+  ((name c:apply-strict) (definers ("interpreter-with-continuations/analyze"))
+                         (referrers ()))
   ((name c:choose-exactly-one)
    (definers ("propagation/constraint-propagators"))
+   (referrers ()))
+  ((name c:compound-apply)
+   (definers ("interpreter-with-continuations/analyze"))
    (referrers ()))
   ((name c:controlled-same) (definers ("propagation/constraint-propagators"))
                             (referrers ()))
   ((name c:cos) (definers ("propagation/constraint-propagators"))
                 (referrers ()))
+  ((name c:deliver-continuation)
+   (definers ("interpreter-with-continuations/analyze"))
+   (referrers ()))
+  ((name c:eval) (definers ("interpreter-with-continuations/analyze"))
+                 (referrers ("interpreter-with-continuations/repl")))
+  ((name c:execute-operands)
+   (definers ("interpreter-with-continuations/analyze"))
+   (referrers ()))
+  ((name c:execute-strict)
+   (definers ("interpreter-with-continuations/analyze"))
+   (referrers ()))
   ((name c:exp) (definers ("propagation/constraint-propagators"))
                 (referrers ()))
   ((name c:full-same) (definers ("propagation/constraint-propagators"))
                       (referrers ()))
+  ((name c:handle-operand)
+   (definers ("interpreter-with-continuations/analyze"))
+   (referrers ()))
   ((name c:implies) (definers ("propagation/constraint-propagators"))
                     (referrers ()))
   ((name c:invert) (definers ("propagation/constraint-propagators"))
@@ -6384,7 +7176,9 @@
    (definers ())
    (referrers
     ("term-rewriting/rules" "pattern-matching-on-graphs/chess-moves"
-                            "layers/units")))
+                            "layers/units"
+                            "better-layering/units-layer"
+                            "better-layering/provenance")))
   ((name cache-wrapped-dispatch-store)
    (definers ("common/generic-procedures"))
    (referrers
@@ -6395,6 +7189,7 @@
   ((name cached-tag>=) (definers ("user-defined-types/predicates"))
                        (referrers ()))
   ((name cadadr) (definers ()) (referrers ("propagation/sugar")))
+  ((name cadar) (definers ()) (referrers ("better-layering/units-layer")))
   ((name cadddr)
    (definers ())
    (referrers
@@ -6443,6 +7238,9 @@
      "common/operations"
      "common/match-utils"
      "common/arith"
+     "better-layering/units-layer"
+     "better-layering/layered-data"
+     "better-layering/extension"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/derivatives"
      "abstracting-a-domain/checkers-shared"
@@ -6450,8 +7248,11 @@
   ((name call-with-input-file)
    (definers ())
    (referrers
-    ("generic-interpreter/repl" "exploratory-behavior/repl"
-                                "compiling-to-execution-procedures/repl")))
+    ("interpreter-with-continuations/repl"
+     "generic-interpreter/repl"
+     "exploratory-behavior/repl"
+     "compiling-to-execution-procedures/repl"
+     "better-layering/repl")))
   ((name call-with-output-string)
    (definers ())
    (referrers
@@ -6468,8 +7269,19 @@
                                      "common/simple-tests"
                                      "combinators/function-combinators")))
   ((name call/cc)
-   (definers ())
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
    (referrers ("propagation/scheduler" "continuations-to-amb/ambsch")))
+  ((name call/cc?)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
+     "better-layering/repl"
+     "better-layering/analyze")))
   ((name call/ccs) (definers ("continuations/analyze-extra")) (referrers ()))
   ((name call/ccs?) (definers ("continuations/analyze-extra")) (referrers ()))
   ((name can-go-both-ways) (definers ("user-defined-types/adventure-world"))
@@ -6500,7 +7312,6 @@
      "term-rewriting/rules"
      "regular-expressions/regexp"
      "propagation/ui"
-     "propagation/sugar"
      "propagation/search"
      "propagation/reasons"
      "propagation/propagators"
@@ -6517,6 +7328,8 @@
      "non-strict-arguments/general-procedures"
      "layers/units"
      "layers/layered-data"
+     "interpreter-with-continuations/rtdata-extra"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/shared-syntax"
      "generic-interpreter/shared-rtdata"
      "generic-interpreter/interp"
@@ -6526,7 +7339,6 @@
      "dependencies/support-sets"
      "continuations/analyze-extra"
      "continuations-to-amb/deque"
-     "continuations-to-amb/ambsch"
      "compiling-to-execution-procedures/executors"
      "compiling-to-execution-procedures/analyze"
      "common/utils"
@@ -6545,6 +7357,11 @@
      "common/arith"
      "common/applicability"
      "combinators/function-combinators"
+     "better-layering/units-layer"
+     "better-layering/rtdata-extra"
+     "better-layering/provenance"
+     "better-layering/layered-data"
+     "better-layering/analyze"
      "automatic-differentiation/utils"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/handlers"
@@ -6564,7 +7381,8 @@
    (definers ())
    (referrers
     ("term-rewriting/rules" "pattern-matching-on-graphs/chess-moves"
-                            "common/generic-procedures")))
+                            "common/generic-procedures"
+                            "better-layering/provenance")))
   ((name cdddr)
    (definers ())
    (referrers
@@ -6583,6 +7401,7 @@
      "common/simple-tests"
      "common/match-utils"
      "common/arith"
+     "better-layering/units-layer"
      "automatic-differentiation/replace-dx-differential")))
   ((name cdr)
    (definers ())
@@ -6609,6 +7428,8 @@
      "pattern-matching-on-graphs/chess-moves"
      "layers/units"
      "layers/layered-data"
+     "interpreter-with-continuations/rtdata-extra"
+     "interpreter-with-continuations/analyze"
      "generic-procedures/generic-arith"
      "generic-interpreter/shared-syntax"
      "generic-interpreter/shared-rtdata"
@@ -6634,6 +7455,12 @@
      "common/arith"
      "common/applicability"
      "combinators/function-combinators"
+     "better-layering/units-layer"
+     "better-layering/rtdata-extra"
+     "better-layering/provenance"
+     "better-layering/layered-data"
+     "better-layering/extension"
+     "better-layering/analyze"
      "automatic-differentiation/utils"
      "automatic-differentiation/simplifier"
      "automatic-differentiation/replace-dx-differential"
@@ -6682,10 +7509,18 @@
   ((name check-executor-args) (definers ("exploratory-behavior/analyze"))
                               (referrers ()))
   ((name check-repl-initialized)
-   (definers ("generic-interpreter/shared-repl"))
+   (definers
+    ("interpreter-with-continuations/initialization"
+     "generic-interpreter/shared-repl"
+     "better-layering/initialization"))
    (referrers
-    ("generic-interpreter/repl" "exploratory-behavior/repl"
-                                "compiling-to-execution-procedures/repl")))
+    ("interpreter-with-continuations/repl"
+     "generic-interpreter/repl"
+     "exploratory-behavior/repl"
+     "compiling-to-execution-procedures/repl"
+     "better-layering/units-layer"
+     "better-layering/repl"
+     "better-layering/provenance")))
   ((name checkers)
    (definers
     ("abstracting-a-domain/checkers-original"
@@ -6789,15 +7624,44 @@
   ((name comparator) (definers ("common/arith")) (referrers ()))
   ((name complement) (definers ("common/predicates"))
                      (referrers ("unification/unify" "layers/layered-data")))
+  ((name complex-compound-procedure?)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
+     "better-layering/repl"
+     "better-layering/analyze")))
+  ((name complex-procedure-body)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
+  ((name complex-procedure-environment)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
+  ((name complex-procedure-parameters)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
   ((name complex?) (definers ("user-defined-types/tags")) (referrers ()))
   ((name compose)
    (definers ("common/utils" "combinators/function-combinators"))
    (referrers
     ("wrappers/units" "non-strict-arguments/general-procedures"
+                      "interpreter-with-continuations/analyze"
                       "generic-interpreter/shared-repl"
                       "exploratory-behavior/analyze"
                       "compiling-to-execution-procedures/repl"
                       "compiling-to-execution-procedures/analyze"
+                      "better-layering/analyze"
                       "automatic-differentiation/simplifier"
                       "abstracting-a-domain/game-interpreter")))
   ((name compose*) (definers ("common/utils")) (referrers ()))
@@ -6813,7 +7677,10 @@
   ((name compound-predicate?) (definers ("user-defined-types/predicates"))
                               (referrers ()))
   ((name compound-procedure?)
-   (definers ("generic-interpreter/shared-rtdata"))
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "generic-interpreter/shared-rtdata"
+     "better-layering/rtdata-extra"))
    (referrers
     ("non-strict-arguments/general-procedures"
      "generic-interpreter/shared-repl"
@@ -6864,9 +7731,11 @@
   ((name cond->if)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name cond-clause-consequent)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers ()))
@@ -6878,10 +7747,16 @@
   ((name cond?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
-  ((name condition?) (definers ()) (referrers ("common/simple-tests")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
+  ((name condition?)
+   (definers ())
+   (referrers
+    ("interpreter-with-continuations/repl" "common/simple-tests"
+                                           "better-layering/repl")))
   ((name conjoin)
    (definers ("common/predicates"))
    (referrers ("user-defined-types/predicates" "layers/layered-data")))
@@ -6924,6 +7799,8 @@
                       "pattern-matching-on-graphs/chess-board"
                       "layers/units"
                       "layers/layered-data"
+                      "interpreter-with-continuations/rtdata-extra"
+                      "interpreter-with-continuations/analyze"
                       "generic-interpreter/shared-syntax"
                       "generic-interpreter/shared-rtdata"
                       "exploratory-behavior/analyze"
@@ -6947,6 +7824,12 @@
                       "common/arith"
                       "combining-arithmetics/standard-arith"
                       "combinators/function-combinators"
+                      "better-layering/units-layer"
+                      "better-layering/rtdata-extra"
+                      "better-layering/layered-data"
+                      "better-layering/extension"
+                      "better-layering/applyer"
+                      "better-layering/analyze"
                       "automatic-differentiation/utils"
                       "automatic-differentiation/simplifier"
                       "automatic-differentiation/replace-dx-differential"
@@ -6998,9 +7881,12 @@
                            (referrers ()))
   ((name container?) (definers ("user-defined-types/adventure-objects"))
                      (referrers ()))
+  ((name continuation?)
+   (definers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze"))
+   (referrers ("better-layering/applyer")))
   ((name continue-revert!) (definers ("exploratory-behavior/rtdata"))
                            (referrers ("exploratory-behavior/analyze")))
-  ((name contradiction-set) (definers ()) (referrers ("propagation/search")))
   ((name contradiction?) (definers ("propagation/cells"))
                          (referrers ("propagation/data-model")))
   ((name control-propagators) (definers ("propagation/primitive-propagators"))
@@ -7118,20 +8004,35 @@
      "automatic-differentiation/handlers")))
   ((name debug-output) (definers ("user-defined-types/adventure-substrate"))
                        (referrers ()))
+  ((name declare-if-c/a-handler) (definers ("better-layering/extension"))
+                                 (referrers ("better-layering/provenance")))
+  ((name declare-if-predicate-handler)
+   (definers ("better-layering/extension"))
+   (referrers ("better-layering/provenance")))
+  ((name declare-layered-procedure-default)
+   (definers ("better-layering/layered-data"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
+  ((name declare-merge-handler)
+   (definers ("better-layering/extension"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
   ((name declare-type-expr) (definers ("unification/type-resolver"))
                             (referrers ()))
   ((name decode-reason) (definers ("propagation/reasons"))
                         (referrers ("propagation/ui")))
   ((name default-analyze)
    (definers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name default-apply)
    (definers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze"))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze"))
    (referrers ()))
   ((name default-equality-tolerance) (definers ("common/utils"))
                                      (referrers ()))
@@ -7171,8 +8072,10 @@
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/repl"
      "exploratory-behavior/repl"
-     "compiling-to-execution-procedures/repl")))
+     "compiling-to-execution-procedures/repl"
+     "better-layering/repl")))
   ((name define-aggregate-rule)
    (definers ("abstracting-a-domain/game"))
    (referrers ("abstracting-a-domain/checkers-new")))
@@ -7215,6 +8118,8 @@
      "propagation/cells"
      "pattern-matching-on-graphs/graph-match"
      "non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
      "generic-procedures/generic-arith"
      "generic-interpreter/shared-rtdata"
      "generic-interpreter/shared-repl"
@@ -7226,6 +8131,9 @@
      "compiling-to-execution-procedures/analyze"
      "common/pretty-printer"
      "common/match-utils"
+     "better-layering/repl"
+     "better-layering/applyer"
+     "better-layering/analyze"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/extractor")))
   ((name define-initial-env-binding)
@@ -7268,31 +8176,42 @@
   ((name define-variable!)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/initialization"
+     "interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/initialization"
+     "better-layering/analyze")))
   ((name define-vector-handler) (definers ("user-defined-types/vector-arith"))
                                 (referrers ()))
   ((name definition-value)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name definition-variable)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name definition?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name degrees->radians) (definers ("propagation/examples/hms-dms-radians"))
                            (referrers ()))
+  ((name delete) (definers ()) (referrers ("better-layering/repl")))
   ((name delete-duplicates)
    (definers ())
    (referrers
@@ -7444,11 +8363,13 @@
      "regular-expressions/regexp"
      "propagation/ui"
      "pattern-matching-on-graphs/chess-board"
+     "interpreter-with-continuations/repl"
      "exploratory-behavior/repl"
      "continuations-to-amb/ambsch"
      "common/utils"
      "common/simple-tests"
-     "common/generic-procedures")))
+     "common/generic-procedures"
+     "better-layering/repl")))
   ((name display-item) (definers ("user-defined-types/adventure-substrate"))
                        (referrers ()))
   ((name display-message)
@@ -7459,12 +8380,18 @@
    (referrers ()))
   ((name div-interval) (definers ("propagation/examples/intervals"))
                        (referrers ()))
+  ((name divide-input-units) (definers ("better-layering/units-layer"))
+                             (referrers ()))
   ((name dms->d) (definers ("propagation/examples/hms-dms-radians"))
                  (referrers ()))
   ((name dms->radians) (definers ("propagation/examples/hms-dms-radians"))
                        (referrers ()))
   ((name do-substitute) (definers ("unification/unify")) (referrers ()))
-  ((name doit!) (definers ("exploratory-behavior/repl")) (referrers ()))
+  ((name doit!)
+   (definers
+    ("interpreter-with-continuations/repl" "exploratory-behavior/repl"
+                                           "better-layering/repl"))
+   (referrers ()))
   ((name dot-product-maker) (definers ("user-defined-types/vector-arith"))
                             (referrers ()))
   ((name dp) (definers ("common/pretty-printer")) (referrers ()))
@@ -7496,6 +8423,8 @@
   ((name enable-debugging)
    (definers ("user-defined-types/adventure-substrate"))
    (referrers ()))
+  ((name end-of-layers?) (definers ("better-layering/extension"))
+                         (referrers ()))
   ((name endo-function-predicate-domain)
    (definers ("user-defined-types/functions"))
    (referrers ()))
@@ -7533,16 +8462,22 @@
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/interp"
      "exploratory-behavior/analyze"
      "continuations/analyze-extra"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/applyer"
+     "better-layering/analyze")))
   ((name eof-object?)
    (definers ())
    (referrers
-    ("generic-interpreter/repl" "exploratory-behavior/repl"
-                                "compiling-to-execution-procedures/repl"
-                                "common/simple-tests")))
+    ("interpreter-with-continuations/repl"
+     "generic-interpreter/repl"
+     "exploratory-behavior/repl"
+     "compiling-to-execution-procedures/repl"
+     "common/simple-tests"
+     "better-layering/repl")))
   ((name eq-hash) (definers ()) (referrers ("common/memoizers")))
   ((name eq-predicate) (definers ("common/predicates")) (referrers ()))
   ((name eq?)
@@ -7574,6 +8509,8 @@
                       "pattern-matching-on-graphs/chess-moves"
                       "pattern-matching-on-graphs/chess-board"
                       "layers/units"
+                      "interpreter-with-continuations/rtdata-extra"
+                      "interpreter-with-continuations/initialization"
                       "generic-interpreter/shared-syntax"
                       "generic-interpreter/shared-rtdata"
                       "generic-interpreter/shared-repl"
@@ -7600,6 +8537,12 @@
                       "common/collections"
                       "common/arith"
                       "combining-arithmetics/standard-arith"
+                      "better-layering/units-layer"
+                      "better-layering/rtdata-extra"
+                      "better-layering/layered-data"
+                      "better-layering/initialization"
+                      "better-layering/extension"
+                      "better-layering/applyer"
                       "automatic-differentiation/utils"
                       "automatic-differentiation/derivatives"
                       "abstracting-a-domain/pmove"
@@ -7620,7 +8563,6 @@
    (referrers
     ("wrappers/units" "user-defined-types/vector-arith"
                       "user-defined-types/templates"
-                      "propagation/sugar"
                       "propagation/hierarchy"
                       "propagation/examples/time"
                       "layers/units"
@@ -7631,6 +8573,9 @@
                       "common/match-utils"
                       "common/generic-procedures"
                       "common/applicability"
+                      "better-layering/units-layer"
+                      "better-layering/provenance"
+                      "better-layering/extension"
                       "automatic-differentiation/replace-dx-differential"
                       "automatic-differentiation/derivatives")))
   ((name equality-predicate-maker) (definers ("common/predicates"))
@@ -7675,6 +8620,7 @@
      "common/collections"
      "common/arith"
      "combinators/function-combinators"
+     "better-layering/provenance"
      "automatic-differentiation/utils"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/extractor")))
@@ -7705,6 +8651,10 @@
                       "pattern-matching-on-graphs/chess-board"
                       "non-strict-arguments/general-procedures"
                       "layers/units"
+                      "interpreter-with-continuations/rtdata-extra"
+                      "interpreter-with-continuations/repl"
+                      "interpreter-with-continuations/initialization"
+                      "interpreter-with-continuations/analyze"
                       "generic-interpreter/shared-syntax"
                       "generic-interpreter/shared-rtdata"
                       "generic-interpreter/shared-repl"
@@ -7727,6 +8677,14 @@
                       "common/collections"
                       "common/arith"
                       "combinators/function-combinators"
+                      "better-layering/units-layer"
+                      "better-layering/rtdata-extra"
+                      "better-layering/repl"
+                      "better-layering/layered-data"
+                      "better-layering/initialization"
+                      "better-layering/extension"
+                      "better-layering/applyer"
+                      "better-layering/analyze"
                       "automatic-differentiation/utils"
                       "automatic-differentiation/handlers"
                       "automatic-differentiation/extractor"
@@ -7780,6 +8738,7 @@
      "common/predicates"
      "common/match-utils"
      "common/applicability"
+     "better-layering/units-layer"
      "automatic-differentiation/derivatives")))
   ((name evolve-jumps) (definers ("abstracting-a-domain/checkers-original"))
                        (referrers ()))
@@ -7830,14 +8789,19 @@
   ((name executor?)
    (definers ("compiling-to-execution-procedures/executors"))
    (referrers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name executors?)
    (definers ("compiling-to-execution-procedures/executors"))
    (referrers
-    ("exploratory-behavior/analyze"
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
      "continuations/analyze-extra"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/applyer"
+     "better-layering/analyze")))
   ((name exit:direction) (definers ("user-defined-types/adventure-objects"))
                          (referrers ()))
   ((name exit:from) (definers ("user-defined-types/adventure-objects"))
@@ -7881,13 +8845,23 @@
                       "combining-arithmetics/standard-arith")))
   ((name extend-constant) (definers ("user-defined-types/operations"))
                           (referrers ()))
+  ((name extend-continuation)
+   (definers ("better-layering/extension"))
+   (referrers
+    ("better-layering/repl" "better-layering/applyer"
+                            "better-layering/analyze")))
   ((name extend-environment)
-   (definers ("generic-interpreter/shared-rtdata"))
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "generic-interpreter/shared-rtdata"
+     "better-layering/rtdata-extra"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name extend-function-predicate)
    (definers ("user-defined-types/functions"))
    (referrers ()))
@@ -7949,6 +8923,8 @@
                                  "common/trie"
                                  "common/simple-tests"
                                  "common/arith"
+                                 "better-layering/provenance"
+                                 "better-layering/extension"
                                  "automatic-differentiation/handlers"
                                  "automatic-differentiation/derivatives"
                                  "abstracting-a-domain/checkers-original"
@@ -7959,7 +8935,6 @@
    (referrers
     ("user-defined-types/functions" "propagation/search"
                                     "layers/layered-data"
-                                    "common/simple-tests"
                                     "common/collections"
                                     "common/arith"
                                     "automatic-differentiation/handlers"
@@ -8034,7 +9009,8 @@
   ((name fold)
    (definers ())
    (referrers
-    ("propagation/value-sets" "automatic-differentiation/literal-functions")))
+    ("propagation/value-sets" "common/simple-tests"
+                              "automatic-differentiation/literal-functions")))
   ((name for-each)
    (definers ())
    (referrers
@@ -8060,6 +9036,10 @@
      "common/pretty-printer"
      "common/predicate-counter"
      "common/generic-procedures"
+     "better-layering/repl"
+     "better-layering/layered-data"
+     "better-layering/extension"
+     "better-layering/applyer"
      "abstracting-a-domain/game-repl")))
   ((name for-each-direction)
    (definers ("pattern-matching-on-graphs/chess-board"))
@@ -8158,7 +9138,9 @@
   ((name g:null?) (definers ("pattern-matching-on-graphs/lists"))
                   (referrers ()))
   ((name g:read)
-   (definers ("generic-interpreter/shared-repl"))
+   (definers
+    ("interpreter-with-continuations/repl" "generic-interpreter/shared-repl"
+                                           "better-layering/repl"))
    (referrers
     ("generic-interpreter/repl" "compiling-to-execution-procedures/repl")))
   ((name game-colors)
@@ -8179,6 +9161,10 @@
   ((name general-derivative)
    (definers ("automatic-differentiation/derivatives"))
    (referrers ()))
+  ((name general-procedure?)
+   (definers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze"))
+   (referrers ("better-layering/provenance")))
   ((name generate-legal-moves) (definers ("abstracting-a-domain/board"))
                                (referrers ("abstracting-a-domain/game-repl")))
   ((name generate-moves) (definers ("abstracting-a-domain/checkers-original"))
@@ -8318,6 +9304,13 @@
                            (referrers ()))
   ((name get-jumps) (definers ("abstracting-a-domain/checkers-new"))
                     (referrers ()))
+  ((name get-layer-value) (definers ("better-layering/layered-data"))
+                          (referrers ("better-layering/applyer")))
+  ((name get-layer-value-default) (definers ("better-layering/layered-data"))
+                                  (referrers ()))
+  ((name get-layer-value-or-default)
+   (definers ("better-layering/layered-data"))
+   (referrers ("better-layering/provenance" "better-layering/applyer")))
   ((name get-location)
    (definers ("user-defined-types/adventure-objects"))
    (referrers
@@ -8400,6 +9393,11 @@
                               (referrers ()))
   ((name get-vistas) (definers ("user-defined-types/adventure-objects"))
                      (referrers ()))
+  ((name global-environment-define)
+   (definers
+    ("interpreter-with-continuations/initialization"
+     "better-layering/initialization"))
+   (referrers ()))
   ((name gmatch:*) (definers ("pattern-matching-on-graphs/graph-match"))
                    (referrers ()))
   ((name gmatch:and) (definers ("pattern-matching-on-graphs/graph-match"))
@@ -8517,6 +9515,7 @@
                       "pattern-matching-on-graphs/chess-board"
                       "layers/units"
                       "layers/layered-data"
+                      "interpreter-with-continuations/rtdata-extra"
                       "generic-interpreter/shared-rtdata"
                       "dependencies/support-sets"
                       "continuations/analyze-extra"
@@ -8530,6 +9529,7 @@
                       "common/generic-procedures"
                       "common/arith"
                       "common/applicability"
+                      "better-layering/rtdata-extra"
                       "abstracting-a-domain/pmove"
                       "abstracting-a-domain/piece"
                       "abstracting-a-domain/game"
@@ -8558,6 +9558,8 @@
                    (referrers ()))
   ((name has-implementation-value?) (definers ("common/utils"))
                                     (referrers ()))
+  ((name has-layer-value?) (definers ("better-layering/layered-data"))
+                           (referrers ("better-layering/provenance")))
   ((name hash-table->alist) (definers ())
                             (referrers ("common/predicate-counter")))
   ((name hash-table-clear!)
@@ -8625,31 +9627,55 @@
    (definers
     ("unification/type-resolver" "generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
+  ((name if-c/a-base-handler) (definers ("better-layering/extension"))
+                              (referrers ()))
+  ((name if-c/a-handler) (definers ("better-layering/extension"))
+                         (referrers ()))
+  ((name if-c/a-value?) (definers ("better-layering/extension"))
+                        (referrers ()))
   ((name if-consequent)
    (definers
     ("unification/type-resolver" "generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name if-expr?) (definers ("unification/type-resolver")) (referrers ()))
   ((name if-predicate)
    (definers
     ("unification/type-resolver" "generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
+  ((name if-predicate-handler) (definers ("better-layering/extension"))
+                               (referrers ()))
+  ((name if-predicate-value?) (definers ("better-layering/extension"))
+                              (referrers ()))
   ((name if?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
-  ((name ignore-errors) (definers ()) (referrers ("common/simple-tests")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
+  ((name ignore-errors)
+   (definers ())
+   (referrers
+    ("interpreter-with-continuations/repl" "common/simple-tests"
+                                           "better-layering/repl")))
+  ((name ignore-value?) (definers ("better-layering/extension"))
+                        (referrers ()))
   ((name ill-formed-syntax)
    (definers ())
    (referrers ("propagation/sugar" "continuations-to-amb/ambsch")))
@@ -8691,8 +9717,12 @@
                                    (referrers ("abstracting-a-domain/board")))
   ((name initial-pmove) (definers ("abstracting-a-domain/pmove"))
                         (referrers ("abstracting-a-domain/game-interpreter")))
-  ((name initialize-repl!) (definers ("generic-interpreter/shared-repl"))
-                           (referrers ()))
+  ((name initialize-repl!)
+   (definers
+    ("interpreter-with-continuations/initialization"
+     "generic-interpreter/shared-repl"
+     "better-layering/initialization"))
+   (referrers ()))
   ((name initialize-scheduler) (definers ("propagation/scheduler"))
                                (referrers ("propagation/examples/time")))
   ((name input-prompt) (definers ("exploratory-behavior/repl"))
@@ -8709,6 +9739,9 @@
   ((name install-core-propagators!)
    (definers ("propagation/primitive-propagators"))
    (referrers ("propagation/ui" "propagation/examples/time")))
+  ((name install-layer-handler!)
+   (definers ("better-layering/initialization"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
   ((name install-package!)
    (definers ("common/package"))
    (referrers ("propagation/primitive-propagators" "common/arith")))
@@ -8825,28 +9858,57 @@
   ((name known-directions)
    (definers ("user-defined-types/adventure-substrate"))
    (referrers ()))
+  ((name l:advance) (definers ("better-layering/analyze"))
+                    (referrers ("better-layering/repl")))
+  ((name l:analyze) (definers ("better-layering/analyze")) (referrers ()))
+  ((name l:apply) (definers ("better-layering/analyze"))
+                  (referrers ("better-layering/applyer")))
+  ((name l:apply-layered) (definers ("better-layering/applyer"))
+                          (referrers ()))
+  ((name l:apply-strict)
+   (definers ("better-layering/analyze"))
+   (referrers ("better-layering/call-cc" "better-layering/applyer")))
+  ((name l:compound-apply) (definers ("better-layering/analyze"))
+                           (referrers ()))
+  ((name l:deliver-continuation) (definers ("better-layering/call-cc"))
+                                 (referrers ("better-layering/analyze")))
+  ((name l:dispatch) (definers ("better-layering/applyer")) (referrers ()))
+  ((name l:eval) (definers ("better-layering/analyze"))
+                 (referrers ("better-layering/repl")))
+  ((name l:execute-operands) (definers ("better-layering/analyze"))
+                             (referrers ("better-layering/applyer")))
+  ((name l:execute-strict) (definers ("better-layering/analyze"))
+                           (referrers ("better-layering/applyer")))
+  ((name l:handle-operand) (definers ("better-layering/analyze"))
+                           (referrers ()))
   ((name lambda-body)
    (definers
     ("unification/type-resolver" "generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name lambda-bvl) (definers ("unification/type-resolver")) (referrers ()))
   ((name lambda-expr?) (definers ("unification/type-resolver"))
                        (referrers ()))
   ((name lambda-parameters)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name lambda?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name last)
    (definers ())
    (referrers
@@ -8865,6 +9927,20 @@
    (definers ("layers/layered-data"))
    (referrers ("propagation/reasons" "dependencies/support-layer")))
   ((name layer-alist?) (definers ("layers/layered-data")) (referrers ()))
+  ((name layer-applicator) (definers ("better-layering/applyer"))
+                           (referrers ()))
+  ((name layer-args)
+   (definers ("better-layering/applyer"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
+  ((name layer-entry) (definers ("better-layering/layered-data"))
+                      (referrers ()))
+  ((name layer-entry-layer-name) (definers ("better-layering/layered-data"))
+                                 (referrers ()))
+  ((name layer-entry-value) (definers ("better-layering/layered-data"))
+                            (referrers ()))
+  ((name layer-value)
+   (definers ("better-layering/layered-data"))
+   (referrers ("better-layering/units-layer" "better-layering/repl")))
   ((name layer?)
    (definers ("layers/layered-data"))
    (referrers
@@ -8880,27 +9956,51 @@
    (definers ("layers/layered-data"))
    (referrers ("propagation/ui" "propagation/examples/example-support")))
   ((name layered-metadata?) (definers ("layers/layered-data")) (referrers ()))
+  ((name layered-procedure-default)
+   (definers ("better-layering/layered-data"))
+   (referrers ()))
   ((name layered-procedure-dispatcher) (definers ("layers/layered-data"))
                                        (referrers ()))
   ((name layered-procedure-metadata) (definers ("layers/layered-data"))
                                      (referrers ()))
+  ((name layered-procedure-values?) (definers ("better-layering/extension"))
+                                    (referrers ()))
   ((name layered-procedure?) (definers ("layers/layered-data"))
                              (referrers ()))
   ((name layered-propagator-projector)
    (definers ("propagation/primitive-propagators"))
    (referrers ("propagation/ui" "propagation/examples/time")))
+  ((name layered-thing)
+   (definers ("better-layering/layered-data"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
+  ((name layered-thing?)
+   (definers ("better-layering/layered-data"))
+   (referrers
+    ("better-layering/units-layer" "better-layering/repl"
+                                   "better-layering/provenance"
+                                   "better-layering/extension"
+                                   "better-layering/applyer"
+                                   "better-layering/analyze")))
+  ((name layers-available) (definers ("better-layering/layered-data"))
+                           (referrers ()))
+  ((name layers-processor) (definers ("better-layering/applyer"))
+                           (referrers ()))
   ((name lazy-memo?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name lazy?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name leave-place!) (definers ("user-defined-types/adventure-objects"))
                        (referrers ()))
   ((name left-direction) (definers ("abstracting-a-domain/coords"))
@@ -8921,6 +10021,7 @@
      "propagation/examples/intervals"
      "pattern-matching-on-graphs/graph-match"
      "non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/shared-rtdata"
      "generic-interpreter/interp"
      "exploratory-behavior/analyze"
@@ -8937,6 +10038,9 @@
      "common/arith"
      "common/applicability"
      "combinators/function-combinators"
+     "better-layering/units-layer"
+     "better-layering/provenance"
+     "better-layering/analyze"
      "automatic-differentiation/utils"
      "automatic-differentiation/literal-functions"
      "automatic-differentiation/derivatives"
@@ -8945,19 +10049,25 @@
   ((name let*->let-nest)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name let*?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name let->combination)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name let-body) (definers ("generic-interpreter/shared-syntax"))
                    (referrers ()))
   ((name let-bound-values) (definers ("generic-interpreter/shared-syntax"))
@@ -8972,9 +10082,11 @@
   ((name let?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name lexical-reference) (definers ())
                             (referrers ("generic-interpreter/shared-rtdata")))
   ((name list)
@@ -9017,6 +10129,9 @@
                       "pattern-matching-on-graphs/chess-board"
                       "layers/units"
                       "layers/layered-data"
+                      "interpreter-with-continuations/rtdata-extra"
+                      "interpreter-with-continuations/repl"
+                      "interpreter-with-continuations/analyze"
                       "generic-interpreter/shared-syntax"
                       "generic-interpreter/shared-rtdata"
                       "exploratory-behavior/analyze"
@@ -9039,9 +10154,16 @@
                       "common/applicability"
                       "combining-arithmetics/standard-arith"
                       "combining-arithmetics/function-variants"
+                      "better-layering/units-layer"
+                      "better-layering/rtdata-extra"
+                      "better-layering/repl"
+                      "better-layering/provenance"
+                      "better-layering/layered-data"
+                      "better-layering/extension"
+                      "better-layering/call-cc"
+                      "better-layering/analyze"
                       "automatic-differentiation/utils"
                       "automatic-differentiation/simplifier"
-                      "automatic-differentiation/replace-dx-differential"
                       "automatic-differentiation/literal-functions"
                       "automatic-differentiation/derivatives"
                       "abstracting-a-domain/pmove"
@@ -9129,8 +10251,11 @@
                              (referrers ()))
   ((name load-library)
    (definers
-    ("generic-interpreter/repl" "exploratory-behavior/repl"
-                                "compiling-to-execution-procedures/repl"))
+    ("interpreter-with-continuations/repl"
+     "generic-interpreter/repl"
+     "exploratory-behavior/repl"
+     "compiling-to-execution-procedures/repl"
+     "better-layering/repl"))
    (referrers ()))
   ((name load-option) (definers ())
                       (referrers ("regular-expressions/regexp")))
@@ -9150,9 +10275,12 @@
   ((name lookup-variable-value)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/initialization"
+     "better-layering/analyze")))
   ((name lset-adjoin)
    (definers ())
    (referrers
@@ -9163,6 +10291,7 @@
                                               "propagation/cells"
                                               "dependencies/support-sets"
                                               "common/utils"
+                                              "better-layering/provenance"
                                               "abstracting-a-domain/pmove")))
   ((name lset-difference)
    (definers ())
@@ -9178,7 +10307,9 @@
     ("propagation/reasons" "layers/layered-data"
                            "dependencies/support-sets"
                            "common/arith"
-                           "common/applicability")))
+                           "common/applicability"
+                           "better-layering/provenance"
+                           "better-layering/applyer")))
   ((name lset<=) (definers ()) (referrers ("dependencies/support-sets")))
   ((name lset=)
    (definers ())
@@ -9186,7 +10317,8 @@
     ("user-defined-types/values" "regular-expressions/regexp"
                                  "dependencies/support-sets"
                                  "common/package"
-                                 "common/memoizers")))
+                                 "common/memoizers"
+                                 "better-layering/units-layer")))
   ((name make-address) (definers ("pattern-matching-on-graphs/chess-board"))
                        (referrers ()))
   ((name make-alist-store)
@@ -9222,6 +10354,9 @@
                       (referrers ("user-defined-types/adventure-world")))
   ((name make-bag) (definers ("user-defined-types/adventure-objects"))
                    (referrers ()))
+  ((name make-base-value)
+   (definers ("better-layering/layered-data"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
   ((name make-begin) (definers ("generic-interpreter/shared-syntax"))
                      (referrers ()))
   ((name make-begin-expr) (definers ("unification/type-resolver"))
@@ -9274,6 +10409,12 @@
                      (referrers ("user-defined-types/adventure-world")))
   ((name make-combination-expr) (definers ("unification/type-resolver"))
                                 (referrers ()))
+  ((name make-complex-compound-procedure)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
   ((name make-compound-procedure)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
@@ -9301,6 +10442,8 @@
                            (referrers ()))
   ((name make-deque) (definers ("continuations-to-amb/deque"))
                      (referrers ("continuations-to-amb/ambsch")))
+  ((name make-dictionary) (definers ("better-layering/extension"))
+                          (referrers ()))
   ((name make-diff-term)
    (definers ("automatic-differentiation/derivatives"))
    (referrers
@@ -9328,9 +10471,11 @@
   ((name make-executor)
    (definers ("compiling-to-execution-procedures/executors"))
    (referrers
-    ("exploratory-behavior/analyze"
+    ("interpreter-with-continuations/analyze"
+     "exploratory-behavior/analyze"
      "continuations/analyze-extra"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name make-exit) (definers ("user-defined-types/adventure-objects"))
                     (referrers ("user-defined-types/adventure-world")))
   ((name make-expectation-context) (definers ("common/simple-tests"))
@@ -9353,7 +10498,10 @@
                                 (referrers ()))
   ((name make-global-environment)
    (definers ("generic-interpreter/shared-rtdata"))
-   (referrers ("generic-interpreter/shared-repl")))
+   (referrers
+    ("interpreter-with-continuations/initialization"
+     "generic-interpreter/shared-repl"
+     "better-layering/initialization")))
   ((name make-graph-edge) (definers ("pattern-matching-on-graphs/graph"))
                           (referrers ()))
   ((name make-graph-node)
@@ -9408,6 +10556,8 @@
                       (referrers ()))
   ((name make-lambda-expr) (definers ("unification/type-resolver"))
                            (referrers ()))
+  ((name make-layer-entry) (definers ("better-layering/layered-data"))
+                           (referrers ()))
   ((name make-layered-datum) (definers ("layers/layered-data"))
                              (referrers ()))
   ((name make-layered-metadata) (definers ("layers/layered-data"))
@@ -9415,6 +10565,10 @@
   ((name make-layered-procedure)
    (definers ("layers/layered-data"))
    (referrers ("propagation/primitive-propagators" "propagation/data-model")))
+  ((name make-layered-result) (definers ("better-layering/layered-data"))
+                              (referrers ()))
+  ((name make-layered-thing) (definers ("better-layering/layered-data"))
+                             (referrers ("better-layering/extension")))
   ((name make-list)
    (definers ())
    (referrers
@@ -9456,6 +10610,7 @@
    (definers ("user-defined-types/operations" "common/operations"))
    (referrers
     ("propagation/examples/intervals"
+     "layers/units"
      "layers/layered-data"
      "combining-arithmetics/standard-arith"
      "combining-arithmetics/function-variants")))
@@ -9511,6 +10666,7 @@
                       "user-defined-types/adventure-substrate"
                       "propagation/value-sets"
                       "pattern-matching-on-graphs/graph"
+                      "interpreter-with-continuations/rtdata-extra"
                       "generic-interpreter/shared-rtdata"
                       "continuations/analyze-extra"
                       "continuations-to-amb/deque"
@@ -9519,6 +10675,7 @@
                       "common/package"
                       "common/generic-procedures"
                       "common/arith"
+                      "better-layering/rtdata-extra"
                       "abstracting-a-domain/pmove"
                       "abstracting-a-domain/piece"
                       "abstracting-a-domain/game"
@@ -9541,6 +10698,12 @@
   ((name make-signature-selector)
    (definers ("user-defined-types/functions"))
    (referrers ("user-defined-types/vector-arith")))
+  ((name make-simple-compound-procedure)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
   ((name make-simple-dispatch-store)
    (definers ("common/generic-procedures"))
    (referrers
@@ -9640,7 +10803,6 @@
                       "term-rewriting/rules"
                       "propagation/value-sets"
                       "propagation/ui"
-                      "propagation/sugar"
                       "propagation/search"
                       "propagation/reasons"
                       "propagation/propagators"
@@ -9657,6 +10819,7 @@
                       "non-strict-arguments/general-procedures"
                       "layers/units"
                       "layers/layered-data"
+                      "interpreter-with-continuations/analyze"
                       "generic-interpreter/shared-syntax"
                       "generic-interpreter/shared-rtdata"
                       "generic-interpreter/interp"
@@ -9682,8 +10845,14 @@
                       "combining-arithmetics/standard-arith"
                       "combining-arithmetics/function-variants"
                       "combinators/function-combinators"
+                      "better-layering/units-layer"
+                      "better-layering/provenance"
+                      "better-layering/layered-data"
+                      "better-layering/applyer"
+                      "better-layering/analyze"
                       "automatic-differentiation/utils"
                       "automatic-differentiation/simplifier"
+                      "automatic-differentiation/replace-dx-differential"
                       "automatic-differentiation/literal-functions"
                       "automatic-differentiation/extractor"
                       "automatic-differentiation/derivatives"
@@ -9693,6 +10862,10 @@
                       "abstracting-a-domain/checkers-original"
                       "abstracting-a-domain/checkers-new"
                       "abstracting-a-domain/board")))
+  ((name map-continuation)
+   (definers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze"))
+   (referrers ()))
   ((name map-function) (definers ("user-defined-types/functions"))
                        (referrers ()))
   ((name map-object-union) (definers ("user-defined-types/values"))
@@ -9725,6 +10898,9 @@
      "propagation/cells"
      "pattern-matching-on-graphs/graph-match"
      "non-strict-arguments/general-procedures"
+     "layers/units"
+     "interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/shared-rtdata"
      "generic-interpreter/shared-repl"
      "generic-interpreter/interp"
@@ -9736,6 +10912,9 @@
      "common/pretty-printer"
      "common/match-utils"
      "common/generic-procedures"
+     "better-layering/repl"
+     "better-layering/applyer"
+     "better-layering/analyze"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/extractor")))
   ((name match-head) (definers ("common/simple-tests")) (referrers ()))
@@ -9877,7 +11056,8 @@
   ((name maybe-show-test-expression) (definers ("common/simple-tests"))
                                      (referrers ()))
   ((name maybe-substitute) (definers ("unification/unify")) (referrers ()))
-  ((name member) (definers ()) (referrers ("common/simple-tests")))
+  ((name member) (definers ())
+                 (referrers ("common/simple-tests" "better-layering/repl")))
   ((name memoize-multi-arg-equal) (definers ("common/memoizers"))
                                   (referrers ()))
   ((name memoize-multi-arg-eqv) (definers ("common/memoizers"))
@@ -9894,6 +11074,7 @@
                                     "generic-interpreter/shared-syntax"
                                     "continuations-to-amb/deque"
                                     "common/match-utils"
+                                    "better-layering/applyer"
                                     "automatic-differentiation/extractor"
                                     "abstracting-a-domain/pmove"
                                     "abstracting-a-domain/board")))
@@ -9907,6 +11088,8 @@
      "automatic-differentiation/extractor")))
   ((name merge) (definers ("propagation/data-model"))
                 (referrers ("propagation/examples/intervals")))
+  ((name merge-handler) (definers ("better-layering/extension"))
+                        (referrers ()))
   ((name merge-interval-real) (definers ("propagation/examples/intervals"))
                               (referrers ()))
   ((name merge-intervals) (definers ("propagation/examples/intervals"))
@@ -9961,6 +11144,8 @@
   ((name multiple-dwelling)
    (definers ("propagation/examples/example-support"))
    (referrers ("propagation/examples/time")))
+  ((name multiply-input-units) (definers ("better-layering/units-layer"))
+                               (referrers ()))
   ((name my-avatar) (definers ("user-defined-types/adventure-world"))
                     (referrers ()))
   ((name n:*)
@@ -10027,6 +11212,7 @@
                       "propagation/examples/intervals"
                       "non-strict-arguments/general-procedures"
                       "layers/units"
+                      "interpreter-with-continuations/analyze"
                       "generic-interpreter/interp"
                       "exploratory-behavior/analyze"
                       "continuations/analyze-extra"
@@ -10035,7 +11221,8 @@
                       "common/simple-tests"
                       "common/operations"
                       "common/arith"
-                      "common/applicability")))
+                      "common/applicability"
+                      "better-layering/analyze")))
   ((name n:>)
    (definers ("common/overrides"))
    (referrers
@@ -10213,6 +11400,8 @@
      "user-defined-types/adventure-objects")))
   ((name nearest-repl/environment) (definers ())
                                    (referrers ("common/simple-tests")))
+  ((name negate-exponents) (definers ("better-layering/units-layer"))
+                           (referrers ()))
   ((name negate-interval) (definers ("propagation/examples/intervals"))
                           (referrers ()))
   ((name negative?) (definers ()) (referrers ("common/utils")))
@@ -10224,6 +11413,10 @@
   ((name new-frame) (definers ("unification/type-resolver")) (referrers ()))
   ((name new-game) (definers ("abstracting-a-domain/game-repl"))
                    (referrers ("abstracting-a-domain/checkers-shared")))
+  ((name new-layer) (definers ())
+                    (referrers ("better-layering/layered-data")))
+  ((name new-layer-value) (definers ("better-layering/layered-data"))
+                          (referrers ()))
   ((name new-piece-position)
    (definers ("abstracting-a-domain/pmove"))
    (referrers ("abstracting-a-domain/checkers-new")))
@@ -10292,6 +11485,8 @@
      "pattern-matching-on-graphs/chess-board"
      "non-strict-arguments/general-procedures"
      "layers/units"
+     "interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/shared-syntax"
      "generic-interpreter/shared-rtdata"
      "generic-interpreter/repl"
@@ -10318,6 +11513,12 @@
      "common/applicability"
      "combining-arithmetics/standard-arith"
      "combinators/function-combinators"
+     "better-layering/units-layer"
+     "better-layering/repl"
+     "better-layering/provenance"
+     "better-layering/layered-data"
+     "better-layering/extension"
+     "better-layering/analyze"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/handlers"
      "automatic-differentiation/extractor"
@@ -10344,7 +11545,6 @@
      "unification/type-resolver"
      "term-rewriting/rules"
      "propagation/ui"
-     "propagation/sugar"
      "propagation/search"
      "propagation/scheduler"
      "propagation/propagators"
@@ -10353,6 +11553,8 @@
      "pattern-matching-on-graphs/chess-moves"
      "layers/units"
      "layers/layered-data"
+     "interpreter-with-continuations/rtdata-extra"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/shared-syntax"
      "generic-interpreter/shared-rtdata"
      "generic-interpreter/interp"
@@ -10366,6 +11568,11 @@
      "common/simple-tests"
      "common/pretty-printer"
      "common/match-utils"
+     "better-layering/units-layer"
+     "better-layering/rtdata-extra"
+     "better-layering/provenance"
+     "better-layering/layered-data"
+     "better-layering/analyze"
      "automatic-differentiation/utils"
      "automatic-differentiation/simplifier"
      "automatic-differentiation/replace-dx-differential"
@@ -10382,6 +11589,7 @@
    (referrers
     ("unification/type-resolver"
      "term-rewriting/rules"
+     "layers/units"
      "generic-interpreter/shared-syntax"
      "common/predicate-metadata"
      "common/operators"
@@ -10448,6 +11656,8 @@
   ((name one-of-the-cells)
    (definers ("propagation/examples/puzzle-utilities"))
    (referrers ()))
+  ((name only-provenance-layer-args) (definers ("better-layering/provenance"))
+                                     (referrers ()))
   ((name open-input-string) (definers ()) (referrers ("common/simple-tests")))
   ((name open-output-string)
    (definers ())
@@ -10457,9 +11667,11 @@
   ((name operands)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name operands?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
@@ -10502,9 +11714,11 @@
   ((name operator)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name operator->procedure-name) (definers ("common/operators"))
                                    (referrers ("common/numeric-arith")))
   ((name operator-arity)
@@ -10699,19 +11913,19 @@
      "term-rewriting/pattern-operator"
      "regular-expressions/regexp"
      "propagation/ui"
-     "propagation/sugar"
      "propagation/hierarchy"
      "pattern-matching-on-graphs/lists"
      "pattern-matching-on-graphs/graph-match"
      "pattern-matching-on-graphs/chess-moves"
      "non-strict-arguments/general-procedures"
      "layers/units"
+     "interpreter-with-continuations/rtdata-extra"
+     "interpreter-with-continuations/analyze"
      "generic-interpreter/shared-syntax"
      "exploratory-behavior/analyze"
      "design-of-the-matcher/matcher"
      "dependencies/support-sets"
      "continuations-to-amb/deque"
-     "continuations-to-amb/ambsch"
      "compiling-to-execution-procedures/analyze"
      "common/utils"
      "common/simple-tests"
@@ -10721,6 +11935,9 @@
      "common/collections"
      "combining-arithmetics/standard-arith"
      "combinators/function-combinators"
+     "better-layering/rtdata-extra"
+     "better-layering/layered-data"
+     "better-layering/analyze"
      "automatic-differentiation/handlers"
      "automatic-differentiation/extractor"
      "automatic-differentiation/derivatives"
@@ -10931,41 +12148,55 @@
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name postpone-memo)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name postponed-environment)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name postponed-expression)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name postponed-memo?)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name postponed?)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name pound-to-newton) (definers ("wrappers/units")) (referrers ()))
   ((name pp)
-   (definers ("generic-interpreter/shared-repl"))
+   (definers
+    ("interpreter-with-continuations/repl" "generic-interpreter/shared-repl"
+                                           "better-layering/repl"))
    (referrers
     ("user-defined-types/values" "unification/type-resolver"
                                  "propagation/cells"
@@ -11066,6 +12297,10 @@
   ((name pretty-print) (definers ("common/pretty-printer")) (referrers ()))
   ((name previous-pmove) (definers ("abstracting-a-domain/pmove"))
                          (referrers ()))
+  ((name primitive-or-simple-procedure?)
+   (definers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze"))
+   (referrers ()))
   ((name primitive-predicate) (definers ("user-defined-types/tags"))
                               (referrers ()))
   ((name primitive-predicates) (definers ("unification/type-resolver"))
@@ -11109,9 +12344,11 @@
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/rtdata-extra"
      "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/rtdata-extra")))
   ((name procedure-environment)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
@@ -11119,21 +12356,33 @@
      "generic-interpreter/interp"
      "exploratory-behavior/analyze"
      "compiling-to-execution-procedures/analyze")))
+  ((name procedure-layer-or-default)
+   (definers ("better-layering/layered-data"))
+   (referrers ("better-layering/applyer")))
   ((name procedure-parameter-name)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/analyze"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name procedure-parameters)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
     ("non-strict-arguments/general-procedures"
+     "interpreter-with-continuations/rtdata-extra"
+     "interpreter-with-continuations/repl"
      "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/rtdata-extra"
+     "better-layering/repl")))
   ((name procedure-printable-representation)
-   (definers ("generic-interpreter/shared-rtdata"))
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "generic-interpreter/shared-rtdata"
+     "better-layering/rtdata-extra"))
    (referrers ("generic-interpreter/shared-repl")))
   ((name procedure-type) (definers ("unification/type-resolver"))
                          (referrers ()))
@@ -11151,11 +12400,13 @@
                                  "user-defined-types/adventure-substrate"
                                  "pattern-matching-on-graphs/graph-match"
                                  "layers/layered-data"
+                                 "interpreter-with-continuations/analyze"
                                  "generic-interpreter/shared-rtdata"
                                  "exploratory-behavior/rtdata"
                                  "common/operations"
                                  "common/applicability"
                                  "combining-arithmetics/standard-arith"
+                                 "better-layering/analyze"
                                  "abstracting-a-domain/game")))
   ((name process-contradictions) (definers ("propagation/search"))
                                  (referrers ("propagation/ui")))
@@ -11170,7 +12421,9 @@
   ((name prompt-for-command-expression)
    (definers ())
    (referrers
-    ("generic-interpreter/shared-repl" "exploratory-behavior/repl")))
+    ("interpreter-with-continuations/repl" "generic-interpreter/shared-repl"
+                                           "exploratory-behavior/repl"
+                                           "better-layering/repl")))
   ((name propagation-reason) (definers ("propagation/reasons"))
                              (referrers ()))
   ((name propagator)
@@ -11222,6 +12475,14 @@
    (referrers ("user-defined-types/adventure-objects")))
   ((name property?) (definers ("user-defined-types/adventure-substrate"))
                     (referrers ()))
+  ((name provenance-merge) (definers ("better-layering/provenance"))
+                           (referrers ()))
+  ((name provenance:*) (definers ("better-layering/provenance"))
+                       (referrers ()))
+  ((name provenance:/) (definers ("better-layering/provenance"))
+                       (referrers ()))
+  ((name provenance:atan) (definers ("better-layering/provenance"))
+                          (referrers ()))
   ((name pt) (definers ("user-defined-types/values")) (referrers ()))
   ((name pto) (definers ("user-defined-types/values")) (referrers ()))
   ((name pure-function-extender)
@@ -11243,9 +12504,11 @@
   ((name quoted?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name quotient) (definers ())
                    (referrers ("common/utils" "common/indexes")))
   ((name r:alt) (definers ("regular-expressions/regexp")) (referrers ()))
@@ -11289,9 +12552,12 @@
   ((name read)
    (definers ())
    (referrers
-    ("generic-interpreter/repl" "exploratory-behavior/repl"
-                                "compiling-to-execution-procedures/repl"
-                                "common/simple-tests")))
+    ("interpreter-with-continuations/repl"
+     "generic-interpreter/repl"
+     "exploratory-behavior/repl"
+     "compiling-to-execution-procedures/repl"
+     "common/simple-tests"
+     "better-layering/repl")))
   ((name read-char) (definers ()) (referrers ("common/simple-tests")))
   ((name read-file) (definers ()) (referrers ("common/simple-tests")))
   ((name read-line) (definers ()) (referrers ("common/simple-tests")))
@@ -11325,6 +12591,7 @@
                       "user-defined-types/adventure-substrate"
                       "propagation/value-sets"
                       "pattern-matching-on-graphs/graph"
+                      "interpreter-with-continuations/rtdata-extra"
                       "generic-interpreter/shared-rtdata"
                       "continuations/analyze-extra"
                       "continuations-to-amb/deque"
@@ -11333,6 +12600,7 @@
                       "common/package"
                       "common/generic-procedures"
                       "common/arith"
+                      "better-layering/rtdata-extra"
                       "abstracting-a-domain/pmove"
                       "abstracting-a-domain/piece"
                       "abstracting-a-domain/game"
@@ -11349,6 +12617,7 @@
                       "user-defined-types/adventure-substrate"
                       "propagation/value-sets"
                       "pattern-matching-on-graphs/graph"
+                      "interpreter-with-continuations/rtdata-extra"
                       "generic-interpreter/shared-rtdata"
                       "continuations/analyze-extra"
                       "continuations-to-amb/deque"
@@ -11358,6 +12627,7 @@
                       "common/package"
                       "common/generic-procedures"
                       "common/arith"
+                      "better-layering/rtdata-extra"
                       "abstracting-a-domain/pmove"
                       "abstracting-a-domain/piece"
                       "abstracting-a-domain/game"
@@ -11369,14 +12639,17 @@
   ((name reduce)
    (definers ())
    (referrers
-    ("propagation/ui" "automatic-differentiation/derivatives"
+    ("propagation/ui" "better-layering/units-layer"
+                      "automatic-differentiation/derivatives"
                       "abstracting-a-domain/game-interpreter")))
   ((name reduce-right)
    (definers ())
    (referrers
-    ("propagation/search" "exploratory-behavior/analyze"
+    ("propagation/search" "interpreter-with-continuations/analyze"
+                          "exploratory-behavior/analyze"
                           "compiling-to-execution-procedures/analyze"
-                          "common/utils")))
+                          "common/utils"
+                          "better-layering/analyze")))
   ((name reflect-ew) (definers ("pattern-matching-on-graphs/chess-board"))
                      (referrers ("pattern-matching-on-graphs/chess-moves")))
   ((name reflect-ns) (definers ("pattern-matching-on-graphs/chess-board"))
@@ -11402,6 +12675,8 @@
                       "pattern-matching-on-graphs/chess-board"
                       "layers/units"
                       "layers/layered-data"
+                      "interpreter-with-continuations/rtdata-extra"
+                      "interpreter-with-continuations/analyze"
                       "generic-interpreter/shared-syntax"
                       "generic-interpreter/shared-rtdata"
                       "exploratory-behavior/rtdata"
@@ -11410,7 +12685,10 @@
                       "compiling-to-execution-procedures/executors"
                       "common/utils"
                       "common/predicates"
-                      "combining-arithmetics/standard-arith")))
+                      "combining-arithmetics/standard-arith"
+                      "better-layering/rtdata-extra"
+                      "better-layering/layered-data"
+                      "better-layering/analyze")))
   ((name register-premise!) (definers ("propagation/premises"))
                             (referrers ("propagation/ui")))
   ((name register-unit-conversion) (definers ("wrappers/units"))
@@ -11450,8 +12728,11 @@
                         (referrers ()))
   ((name repl)
    (definers
-    ("generic-interpreter/repl" "exploratory-behavior/repl"
-                                "compiling-to-execution-procedures/repl"))
+    ("interpreter-with-continuations/repl"
+     "generic-interpreter/repl"
+     "exploratory-behavior/repl"
+     "compiling-to-execution-procedures/repl"
+     "better-layering/repl"))
    (referrers ("generic-interpreter/shared-repl")))
   ((name repl:write-result-hash-numbers?) (definers ())
                                           (referrers ("common/utils")))
@@ -11564,9 +12845,11 @@
   ((name self-evaluating?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name send-message!) (definers ("user-defined-types/adventure-substrate"))
                         (referrers ("user-defined-types/adventure-objects")))
   ((name sequence->begin) (definers ("generic-interpreter/shared-syntax"))
@@ -11582,7 +12865,9 @@
    (referrers
     ("unification/type-resolver" "generic-interpreter/shared-rtdata"
                                  "compiling-to-execution-procedures/executors"
-                                 "common/simple-tests")))
+                                 "common/simple-tests"
+                                 "better-layering/layered-data"
+                                 "better-layering/extension")))
   ((name set-cdr!)
    (definers ())
    (referrers
@@ -11605,6 +12890,9 @@
   ((name set-current-time!)
    (definers ("user-defined-types/adventure-substrate"))
    (referrers ()))
+  ((name set-default-layer-value!)
+   (definers ("better-layering/layered-data"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
   ((name set-deque-back!) (definers ("continuations-to-amb/deque"))
                           (referrers ()))
   ((name set-deque-front!) (definers ("continuations-to-amb/deque"))
@@ -11655,9 +12943,11 @@
   ((name set-variable-value!)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name set-vector-handler!) (definers ("user-defined-types/vector-arith"))
                               (referrers ()))
   ((name setup-propagator-system) (definers ("propagation/ui"))
@@ -11665,8 +12955,11 @@
   ((name shallow-fluid-bind)
    (definers ())
    (referrers
-    ("common/simple-tests" "common/package"
-                           "automatic-differentiation/extractor")))
+    ("interpreter-with-continuations/repl"
+     "common/simple-tests"
+     "common/package"
+     "better-layering/repl"
+     "automatic-differentiation/extractor")))
   ((name shortcut-boolean-propagators)
    (definers ("propagation/primitive-propagators"))
    (referrers ()))
@@ -11681,6 +12974,9 @@
                              (referrers ()))
   ((name show-reason-merges?) (definers ("propagation/reasons"))
                               (referrers ()))
+  ((name show-result)
+   (definers ("interpreter-with-continuations/repl" "better-layering/repl"))
+   (referrers ()))
   ((name show-test-expressions?) (definers ("common/simple-tests"))
                                  (referrers ()))
   ((name show-time) (definers ()) (referrers ("propagation/examples/time")))
@@ -11688,12 +12984,23 @@
                (referrers ("abstracting-a-domain/coords")))
   ((name sign-interval) (definers ("propagation/examples/intervals"))
                         (referrers ()))
+  ((name signed) (definers ("better-layering/provenance")) (referrers ()))
   ((name similar-packages?) (definers ("common/package")) (referrers ()))
   ((name simple-abstract-predicate)
    (definers ("user-defined-types/predicates"))
    (referrers ("user-defined-types/adventure-substrate")))
   ((name simple-compose) (definers ("combinators/function-combinators"))
                          (referrers ()))
+  ((name simple-compound-procedure?)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
+     "better-layering/repl"
+     "better-layering/applyer"
+     "better-layering/analyze")))
   ((name simple-endo-function-domain)
    (definers ("user-defined-types/functions"))
    (referrers ()))
@@ -11743,6 +13050,8 @@
                                  "propagation/ui"
                                  "propagation/data-model"
                                  "non-strict-arguments/general-procedures"
+                                 "interpreter-with-continuations/repl"
+                                 "interpreter-with-continuations/analyze"
                                  "generic-interpreter/shared-syntax"
                                  "generic-interpreter/shared-rtdata"
                                  "generic-interpreter/shared-repl"
@@ -11751,6 +13060,8 @@
                                  "compiling-to-execution-procedures/analyze"
                                  "common/pretty-printer"
                                  "common/match-utils"
+                                 "better-layering/repl"
+                                 "better-layering/analyze"
                                  "automatic-differentiation/extractor")))
   ((name simple-list-memoizer)
    (definers ("common/memoizers"))
@@ -11774,9 +13085,31 @@
   ((name simple-parallel-combine)
    (definers ("combinators/function-combinators"))
    (referrers ()))
+  ((name simple-parameter-list?)
+   (definers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze"))
+   (referrers ()))
   ((name simple-predicate?) (definers ("user-defined-types/predicates"))
                             (referrers ()))
   ((name simple-probe) (definers ("propagation/cells")) (referrers ()))
+  ((name simple-procedure-body)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
+  ((name simple-procedure-environment)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
+  ((name simple-procedure-parameters)
+   (definers
+    ("interpreter-with-continuations/rtdata-extra"
+     "better-layering/rtdata-extra"))
+   (referrers
+    ("interpreter-with-continuations/analyze" "better-layering/analyze")))
   ((name simple-propagator-projector)
    (definers ("propagation/primitive-propagators"))
    (referrers ()))
@@ -11820,6 +13153,8 @@
     ("user-defined-types/generics"
      "layers/units"
      "common/utils"
+     "better-layering/units-layer"
+     "better-layering/provenance"
      "automatic-differentiation/replace-dx-differential"
      "automatic-differentiation/extractor")))
   ((name sort-by) (definers ("common/utils"))
@@ -11853,6 +13188,9 @@
   ((name standard-print-method)
    (definers ())
    (referrers ("user-defined-types/tagging" "common/utils")))
+  ((name standard-warning-handler)
+   (definers ())
+   (referrers ("interpreter-with-continuations/repl" "better-layering/repl")))
   ((name start-adventure) (definers ("user-defined-types/adventure-world"))
                           (referrers ()))
   ((name start-chess-game)
@@ -11873,9 +13211,14 @@
   ((name strict-primitive-procedure?)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/repl"
+     "interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/repl"
+     "better-layering/applyer"
+     "better-layering/analyze")))
   ((name string)
    (definers ())
    (referrers
@@ -12013,27 +13356,34 @@
                                     "propagation/primitive-propagators"
                                     "propagation/premises"
                                     "layers/layered-data")))
-  ((name symbol<?) (definers ())
-                   (referrers ("term-rewriting/rules" "layers/units")))
+  ((name symbol<?)
+   (definers ())
+   (referrers
+    ("term-rewriting/rules" "layers/units" "better-layering/units-layer")))
   ((name symbol>?) (definers ())
                    (referrers ("automatic-differentiation/derivatives")))
   ((name symbol?)
    (definers ("user-defined-types/tags"))
    (referrers
-    ("user-defined-types/operations" "unification/type-resolver"
-                                     "term-rewriting/rules"
-                                     "propagation/reasons"
-                                     "propagation/hierarchy"
-                                     "pattern-matching-on-graphs/graph-match"
-                                     "pattern-matching-on-graphs/chess-moves"
-                                     "non-strict-arguments/general-procedures"
-                                     "layers/units"
-                                     "generic-procedures/generic-arith"
-                                     "generic-interpreter/shared-syntax"
-                                     "generic-interpreter/interp"
-                                     "common/predicate-metadata"
-                                     "common/match-utils"
-                                     "combining-arithmetics/standard-arith")))
+    ("user-defined-types/operations"
+     "unification/type-resolver"
+     "term-rewriting/rules"
+     "propagation/reasons"
+     "propagation/hierarchy"
+     "pattern-matching-on-graphs/graph-match"
+     "pattern-matching-on-graphs/chess-moves"
+     "non-strict-arguments/general-procedures"
+     "layers/units"
+     "interpreter-with-continuations/rtdata-extra"
+     "interpreter-with-continuations/analyze"
+     "generic-procedures/generic-arith"
+     "generic-interpreter/shared-syntax"
+     "generic-interpreter/interp"
+     "common/predicate-metadata"
+     "common/match-utils"
+     "combining-arithmetics/standard-arith"
+     "better-layering/rtdata-extra"
+     "better-layering/analyze")))
   ((name symbolic-arithmetic-1)
    (definers ("combining-arithmetics/standard-arith"))
    (referrers ()))
@@ -12055,6 +13405,12 @@
   ((name symmetrize-move)
    (definers ("pattern-matching-on-graphs/chess-moves"))
    (referrers ()))
+  ((name syntax-rules:expand-template)
+   (definers ())
+   (referrers ("propagation/sugar" "continuations-to-amb/ambsch")))
+  ((name syntax-rules:match-datum)
+   (definers ())
+   (referrers ("propagation/sugar" "continuations-to-amb/ambsch")))
   ((name system-global-environment)
    (definers ())
    (referrers
@@ -12193,9 +13549,11 @@
   ((name text-of-quotation)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
   ((name the-board) (definers ("pattern-matching-on-graphs/chess-board"))
                     (referrers ()))
   ((name the-clock) (definers ("user-defined-types/adventure-world"))
@@ -12207,10 +13565,16 @@
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers ("continuations/analyze-extra")))
   ((name the-global-environment)
-   (definers ("generic-interpreter/shared-repl"))
+   (definers
+    ("interpreter-with-continuations/initialization"
+     "generic-interpreter/shared-repl"
+     "better-layering/initialization"))
    (referrers
-    ("generic-interpreter/repl" "exploratory-behavior/repl"
-                                "compiling-to-execution-procedures/repl")))
+    ("interpreter-with-continuations/repl"
+     "generic-interpreter/repl"
+     "exploratory-behavior/repl"
+     "compiling-to-execution-procedures/repl"
+     "better-layering/repl")))
   ((name the-nothing)
    (definers ("propagation/cells"))
    (referrers
@@ -12219,6 +13583,7 @@
   ((name the-unspecified-value)
    (definers ("generic-interpreter/shared-rtdata"))
    (referrers ()))
+  ((name thing) (definers ()) (referrers ("better-layering/layered-data")))
   ((name thing:location) (definers ("user-defined-types/adventure-objects"))
                          (referrers ()))
   ((name thing?) (definers ("user-defined-types/adventure-objects"))
@@ -12315,6 +13680,10 @@
   ((name uninterned-symbol?)
    (definers ())
    (referrers ("automatic-differentiation/derivatives")))
+  ((name union-contributions) (definers ("better-layering/provenance"))
+                              (referrers ()))
+  ((name union-contributions*) (definers ("better-layering/provenance"))
+                               (referrers ()))
   ((name union-function) (definers ("user-defined-types/functions"))
                          (referrers ("user-defined-types/operations")))
   ((name union-function*)
@@ -12366,7 +13735,13 @@
   ((name unit:unitless-operation) (definers ("layers/units")) (referrers ()))
   ((name unit=?) (definers ("layers/units")) (referrers ()))
   ((name unit?) (definers ("layers/units")) (referrers ()))
-  ((name unitless?) (definers ("layers/units")) (referrers ()))
+  ((name unitless-alist?) (definers ("better-layering/units-layer"))
+                          (referrers ()))
+  ((name unitless?) (definers ("layers/units" "better-layering/units-layer"))
+                    (referrers ()))
+  ((name units:*) (definers ("better-layering/units-layer")) (referrers ()))
+  ((name units:sqrt) (definers ("better-layering/units-layer"))
+                     (referrers ()))
   ((name universal-ancestor) (definers ("propagation/hierarchy"))
                              (referrers ()))
   ((name unknown-reason) (definers ("propagation/reasons")) (referrers ()))
@@ -12375,6 +13750,11 @@
   ((name unregister-with-clock!)
    (definers ("user-defined-types/adventure-substrate"))
    (referrers ("user-defined-types/adventure-objects")))
+  ((name unset->empty) (definers ("better-layering/provenance"))
+                       (referrers ()))
+  ((name unset?)
+   (definers ("better-layering/extension"))
+   (referrers ("better-layering/units-layer" "better-layering/provenance")))
   ((name unusable-value?)
    (definers ("propagation/data-model"))
    (referrers
@@ -12390,7 +13770,9 @@
                        (referrers ("abstracting-a-domain/checkers-new")))
   ((name user-initial-environment)
    (definers ())
-   (referrers ("generic-interpreter/shared-repl")))
+   (referrers
+    ("interpreter-with-continuations/repl" "generic-interpreter/shared-repl"
+                                           "better-layering/repl")))
   ((name v:map1) (definers ("user-defined-types/vector-arith"))
                  (referrers ()))
   ((name v:map2) (definers ("user-defined-types/vector-arith"))
@@ -12423,11 +13805,17 @@
   ((name variable?)
    (definers ("generic-interpreter/shared-syntax"))
    (referrers
-    ("generic-interpreter/interp"
+    ("interpreter-with-continuations/analyze"
+     "generic-interpreter/interp"
      "exploratory-behavior/analyze"
-     "compiling-to-execution-procedures/analyze")))
-  ((name vector) (definers ())
-                 (referrers ("generic-interpreter/shared-rtdata")))
+     "compiling-to-execution-procedures/analyze"
+     "better-layering/analyze")))
+  ((name vector)
+   (definers ())
+   (referrers
+    ("interpreter-with-continuations/rtdata-extra"
+     "generic-interpreter/shared-rtdata"
+     "better-layering/rtdata-extra")))
   ((name vector->list)
    (definers ())
    (referrers ("user-defined-types/vector-arith" "common/pretty-printer")))
@@ -12493,6 +13881,8 @@
                      (referrers ()))
   ((name with-active-tag) (definers ("automatic-differentiation/extractor"))
                           (referrers ()))
+  ((name with-additional-layers) (definers ("better-layering/layered-data"))
+                                 (referrers ()))
   ((name with-arithmetic) (definers ("common/arith")) (referrers ()))
   ((name with-breadth-first-schedule)
    (definers ("continuations-to-amb/ambsch"))
@@ -12501,6 +13891,11 @@
                                     (referrers ()))
   ((name with-installed-package!) (definers ("common/package"))
                                   (referrers ("common/arith")))
+  ((name with-new-layer!)
+   (definers ("better-layering/layered-data"))
+   (referrers
+    ("better-layering/units-layer" "better-layering/provenance"
+                                   "better-layering/initialization")))
   ((name with-notification) (definers ()) (referrers ("common/simple-tests")))
   ((name with-output-to-port) (definers ())
                               (referrers ("common/simple-tests")))
@@ -12508,6 +13903,8 @@
                                 (referrers ()))
   ((name with-string-output-port) (definers ())
                                   (referrers ("common/pretty-printer")))
+  ((name with-units) (definers ("better-layering/units-layer"))
+                     (referrers ()))
   ((name within-continuation) (definers ())
                               (referrers ("continuations-to-amb/ambsch")))
   ((name within-interval?) (definers ("propagation/examples/intervals"))
@@ -12515,7 +13912,9 @@
   ((name wrap-simplifier) (definers ("automatic-differentiation/utils"))
                           (referrers ()))
   ((name write)
-   (definers ("generic-interpreter/shared-repl"))
+   (definers
+    ("interpreter-with-continuations/repl" "generic-interpreter/shared-repl"
+                                           "better-layering/repl"))
    (referrers
     ("propagation/ui" "pattern-matching-on-graphs/chess-board"
                       "non-strict-arguments/general-procedures"
@@ -12536,7 +13935,9 @@
    (referrers ("common/pretty-printer" "abstracting-a-domain/game-repl")))
   ((name write-labeled) (definers ("propagation/ui")) (referrers ()))
   ((name write-line)
-   (definers ("generic-interpreter/shared-repl"))
+   (definers
+    ("interpreter-with-continuations/repl" "generic-interpreter/shared-repl"
+                                           "better-layering/repl"))
    (referrers
     ("non-strict-arguments/general-procedures"
      "generic-interpreter/repl"
@@ -12566,8 +13967,11 @@
   ((name xms->x) (definers ("propagation/examples/hms-dms-radians"))
                  (referrers ()))
   ((name yield) (definers ("continuations-to-amb/ambsch")) (referrers ()))
-  ((name zero?) (definers ())
-                (referrers ("automatic-differentiation/handlers")))
+  ((name zero?)
+   (definers ())
+   (referrers
+    ("better-layering/units-layer" "better-layering/provenance"
+                                   "automatic-differentiation/handlers")))
   ((name ~<?) (definers ("common/utils"))
               (referrers ("propagation/examples/intervals")))
   ((name ~=?)

@@ -90,6 +90,7 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
     (rule `(+ (?? a) (? b) (?? c) (* (? n ,number?) (? b)) (?? d))
           `(+ ,@a ,@c (* ,(+ n 1) ,b) ,@d))
 
+    ;; Possibly unnecessary because terms are sorted and "b" < "3*b"?
     (rule `(+ (?? a) (* (? n ,number?) (? b)) (?? c) (? b) (?? d))
           `(+ ,@a ,@c (* ,(+ n 1) ,b) ,@d))
 
@@ -122,6 +123,7 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
     (rule `(* (?? a) (? b) (?? c) (expt (? b) (? n)) (?? d))
           `(* ,@a ,@c (expt ,b ,(+ n 1)) ,@d))
 
+    ;; Possibly unnecessary because terms are sorted and "b" < "b^3"?
     (rule `(* (?? a) (expt (? b) (? n)) (?? c) (? b) (?? d))
           `(* ,@a ,@c (expt ,b ,(+ n 1)) ,@d))
 
@@ -132,7 +134,7 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
           `(* ,@a (expt ,b ,(+ m n)) ,@d))
 
     (rule `(expt (expt (? x) (? n)) (? m))
-          `(expt ,x ,(+ n m)))
+          `(expt ,x ,(* n m)))
 
     (rule `(/ (expt (? x) (? n)) (expt (? x) (? m)))
           `(expt ,x ,(- n m)))

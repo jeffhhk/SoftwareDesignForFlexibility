@@ -140,6 +140,7 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
              unit:binary-comparison)
          unit:unitless-operation))))
 
+
 (define (unit-arithmetic)
   (make-arithmetic 'unit unit? '()
     (lambda (name)
@@ -147,9 +148,15 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
           unit:none
           (default-object)))
     (lambda (operator)
-      (simple-operation operator
-                        unit?
-                        (unit-procedure operator)))))
+      (case operator
+        ((expt)                         ;GJS:21Apr2021
+         (make-operation operator
+                         (match-args unit? number?)
+                         unit:expt))
+        (else
+         (simple-operation operator
+                           unit?
+                           (unit-procedure operator)))))))
 
 (define (unit:* u1 u2)
   (alist->unit
@@ -176,7 +183,7 @@ along with SDF.  If not, see <https://www.gnu.org/licenses/>.
 (define (unit:expt u1 r)
   (guarantee exact-rational? r 'unit:expt)
   (if (n:= r 0)
-      '()
+      (unit)
       (alist->unit
        (map (lambda (f)
               (cons (car f) (n:* r (cdr f))))
